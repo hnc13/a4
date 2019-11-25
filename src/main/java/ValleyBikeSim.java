@@ -718,6 +718,9 @@ public class ValleyBikeSim{
 		String[] mems = new String[] {"Founding Member", "Annual", "Monthly"};
 		List<String> memsOptions = Arrays.asList(mems);
 		
+		String[] costs = new String[] {"90","80","20"}; //membership costs
+		List<String> costOptions = Arrays.asList(costs);
+		
 		Scanner s = new Scanner(System.in);  // Create a Scanner object
 		while (true) {
 			System.out.println("Please select a membership");
@@ -750,6 +753,8 @@ public class ValleyBikeSim{
 				a.setMembership(mem);
 			}
 		}
+		int cost = Integer.parseInt(costOptions.get(Integer.parseInt(choice)-1));
+		payment(cost);
 		saveAccountList();
 		System.out.println("Congratulations! You now have a ValleyBike " + memsOptions.get(Integer.parseInt(choice)-1) + " membership!");
 		}
@@ -762,8 +767,11 @@ public class ValleyBikeSim{
 		String[] num = new String[] {"1","2", "3"}; //membership options
 		List<String> memOptions = Arrays.asList(num);
 		
-		String[] mems = new String[] {"Founding Member", "Annual", "Monthly"};
+		String[] mems = new String[] {"Founding Member", "Annual", "Monthly"}; //membership names
 		List<String> memsOptions = Arrays.asList(mems);
+		
+		String[] costs = new String[] {"90","80","20"}; //membership costs
+		List<String> costOptions = Arrays.asList(costs);
 		
 		System.out.println("Your current membership is: " + memsOptions.get(currentUser.getMembership()-1) +".");
 		System.out.println("We have 3 membership options available.");
@@ -803,8 +811,33 @@ public class ValleyBikeSim{
 				a.setMembership(mem);
 			}
 		}
+		int cost = Integer.parseInt(costOptions.get(Integer.parseInt(choice)-1));
+		payment(cost);
 		saveAccountList();
 		System.out.println("Congratulations! You now have a ValleyBike " + memsOptions.get(Integer.parseInt(choice)-1) + " membership!");
+	}
+	
+	public static void payment (int cost) {
+		Random rand = new Random();
+        int chance = rand.nextInt(9);
+		Scanner s = new Scanner(System.in);  // Create a Scanner object
+		String input;
+		System.out.println("Your total is $" + cost + ".");
+		while(true) {
+			System.out.println("Please enter your credit/debit card number: ");
+			input = s.next();
+			
+			if (chance <= 9) {
+				System.out.println("Your payment has been accepted.");
+				int oldBal = currentUser.getBalance();
+				currentUser.setBalance(cost+oldBal);
+				break;
+			} else {
+				System.out.println("There was a problem proccessing your payment. Please try again.");
+				continue;
+			}
+		}
+		
 	}
 		
 	
@@ -880,7 +913,7 @@ public class ValleyBikeSim{
 					System.out.println("Welcome to ValleyBike, user " + currentUser.getID() + ".");
 					welcome = true;
 				}
-				String[] num = new String[] {"0","1","2","3","4","5"}; //menu options
+				String[] num = new String[] {"0","1","2","3","4","5", "6"}; //menu options
 				List<String> menuOptions = Arrays.asList(num);
 				String input;
 				
@@ -905,8 +938,8 @@ public class ValleyBikeSim{
 				
 				Scanner c = new Scanner(System.in);  // Create a Scanner object
 				System.out.println("Please choose from one of the following menu options:");
-				String[] options = new String[] {"[0] Quit Program.", "[1] View station list.", "[2] Purchase/Change Membership", "[3] Start Ride.", 
-						"[4] End ride.", "[5] View ride history."};
+				String[] options = new String[] {"[0] Quit Program.", "[1] View station list.", "[2] Purchase/Change Membership.", "[3] Start Ride.", 
+						"[4] End ride.", "[5] View ride history.", "[6] View balance."};
 				while (true) {
 					for (int i=0; i<options.length; i++){
 						System.out.println(options[i]);
@@ -935,7 +968,9 @@ public class ValleyBikeSim{
 					System.out.println("okay");
 				} else if (input.equals("5")) { //view ride history
 					//TODO: call view ride history
-					System.out.println("okay");
+					System.out.println("okay"); 
+				} else if (input.equals("6")) { //view balance
+					System.out.println("Your balance is $" + currentUser.getBalance() + ".");
 				}
 			}
 		}

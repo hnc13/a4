@@ -1,10 +1,10 @@
 
 public class Account {
-	private int type;
-	private int id;
-	private String password;
-	private int membership;
-	private int balance;
+	private int type; //whether the user is a user or an admin
+	private int id; //user's id
+	private String password; //user's password
+	private int membership; //the type of membership the user has
+	private int balance; //how much money the user has paid ValleyBike
 	
 	public Account (int type, int id, String password, int membership, int balance) {
 		this.type = type;
