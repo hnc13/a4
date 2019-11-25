@@ -3,13 +3,11 @@ public class Account {
 	private int type;
 	private int id;
 	private String password;
-	private int payMet; //0 for n/a, 1 for debit, 2  for credit
 	
-	public Account (int type, int id, String password, int payMet) {
+	public Account (int type, int id, String password) {
 		this.type = type;
 		this.id = id;
 		this.password = password;
-		this.payMet = payMet;
 	}
 	
 	public int getType () {
@@ -24,10 +22,6 @@ public class Account {
 		return this.password;
 	}
 	
-	public int getPayMet () {
-		return this.payMet;
-	}
-	
 	public void setType (int type) {
 		this.type = type;
 	}  
@@ -40,7 +34,4 @@ public class Account {
 		this.password = pass;
 	}
 	
-	public void setPayMet (int payMet) {
-		this.payMet = payMet;
-	}
 }

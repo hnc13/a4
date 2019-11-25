@@ -55,6 +55,12 @@ public class ValleyBikeSim{
 		return temp;
 	}
 	
+	//Turn Account object into a string
+		public static String accountToString(Account obj){
+			String temp = obj.getType() + "," + obj.getID() + "," + obj.getPassword();
+			return temp;
+		}
+	
 	//Write current station list to a file. Updates current csv file that was read
 	public static void saveStationList(){
 		try{
@@ -279,6 +285,19 @@ public class ValleyBikeSim{
 		Station myStation = new Station(id,name,bikes,peds,avDocs,mainReq,cap,kiosk,address);
 		all_stations.add(myStation);	
 	}
+	
+		//Add an Account object to all_accounts
+		public static void addAccount(String data){
+			String[] temp = data.split(","); //turn data into an array
+			//Parse out the string
+			int type = Integer.parseInt(temp[0]);
+			int id = Integer.parseInt(temp[1]);
+			String password = temp[2];
+			
+			//Create a new account
+			Account account = new Account(type, id, password);
+			all_accounts.add(account);	
+		}
 	
 	//Summarize rides after parsing a list of arrays in string form
 	public static void summarizeRides(List<String[]> data){
@@ -563,33 +582,52 @@ public class ValleyBikeSim{
 		}
 	}
 	
-	public void newUser () {
-//		List<String[]> data = new ArrayList<String[]>(); //Holds accounts listed in file
-//		try{
-//			BufferedReader csvReader = new BufferedReader(new FileReader(path));
-//			String row;
-//			int count = 0;
-//			//Read the file line by line and save to the list of arrays called "data"
-//			while ((row = csvReader.readLine()) != null) {
-//				if(count != 0){ //skips first row which contains column headers
-//					String[] temp = row.split(",");
-//					data.add(temp);
-//				}
-//				count++;
-//			}
-//			csvReader.close();
-//		}
-//		catch (Exception e) { 
-//	        e.printStackTrace(); 
-//	    }
-//		summarizeRides(data); //call for summary of rides
+	public static void createAccount() {
+		int ID = 0;
+		String password = null;
+		int type = 0;
+		Scanner c = new Scanner(System.in);  // Create a Scanner object
+		
+		Random rand = new Random();
+        Integer randomID = rand.nextInt(9999-1000)+1000;
+        boolean repeat = false;
+        
+        while (ID == 0) {
+        	repeat = false;
+        	for(Account a : all_accounts) {
+            	if(randomID.equals(a.getID())) {
+            		randomID = rand.nextInt(9999-1000)+1000;
+            		repeat = true;
+            	}
+            }
+        	if (repeat == false) {
+        		ID = randomID;
+        	}
+        } 
+		
+		System.out.println();
+		System.out.println("Please fill out the information requested below.");
+		System.out.println("Type 'back' to return to main menu.");
+
+		//input password
+		while (password == null) {
+			System.out.println("Create password: ");
+			password = c.nextLine();
+			if (password.equals("back")) {
+				System.out.println();
+				return;
+			}
+		}
+		
+		Account user = new Account (type, ID, password);
+		all_accounts.add(user);
 		
 		try{
-			FileWriter myWriter = new FileWriter(data-files/Accounts.csv);
-			myWriter.append("ID,Name,Bikes,Pedelecs,Available Docks,Maintainence,Capacity,Kiosk,Address");
+			FileWriter myWriter = new FileWriter("data-files/Accounts.csv");
+			myWriter.append("Type (0 for user and 1 for admin),ID,Password");
 			myWriter.append("\n");
-			for(Station s : all_stations){
-				myWriter.append(objectToString(s));
+			for(Account a : all_accounts){
+				myWriter.append(accountToString(a));
 				myWriter.append("\n");
 			}
 			myWriter.flush();
@@ -598,24 +636,72 @@ public class ValleyBikeSim{
 		catch (IOException e) {
 			e.printStackTrace();
 		}	
+		
+		System.out.println("Congrats! Your account has been created. Your user ID is " + ID + ".");
+	}
+	
+	public static void logIn() {
+		System.out.println("Please log in to your account.");
+		System.out.println("User ID: ");
+		System.out.println("Password: ");
 	}
 	
 	public static void main(String[] args) throws ParseException {
 		//initialize the fields
 		all_stations = new ArrayList<Station>(); 
 		all_rides = new ArrayList<Ride>();
+		all_accounts = new ArrayList<Account>();
 		
-		//Read station data from a file and store into all_stations
+		//Allow user to log in or create an account
 		Scanner s = new Scanner(System.in);  // Create a Scanner object
 		System.out.println("Welcome to the ValleyBike Simulator.");
-		System.out.print("Please enter a file path: ");
-		path = s.next();
+		System.out.println("Please log in or create an account.");
+		
+		try{
+			BufferedReader csvReader = new BufferedReader(new FileReader("data-files/Accounts.csv"));
+			String row;
+			int count = 0;
+			while ((row = csvReader.readLine()) != null) {
+				if(count != 0){
+					addAccount(row); //Add station to all_stations
+				}
+				count++;
+			}
+			csvReader.close();
+			
+			
+		}
+		catch (Exception e) { 
+	        e.printStackTrace(); 
+	    }
+		
+		String[] num01 = new String[] {"0","1"}; //log in options
+		List<String> logInOptions = Arrays.asList(num01);
+		String choice;
+		
+		while (true) {
+			System.out.println("[0] Log in.");
+			System.out.println("[1] Create account.");
+			choice = s.next();
+			if (logInOptions.contains(choice)) {
+				break;
+			}
+		}
+		
+		if (choice.equals("0")) { //log in
+			logIn();
+		} else if (choice.equals("1")) { //create a new account
+			createAccount();
+		}
+		
+//		System.out.print("Please enter a file path: ");
+//		path = s.next();
 		
 		String[] num = new String[] {"0","1","2","3","4","5","6"}; //menu options
 		List<String> menuOptions = Arrays.asList(num);
 	
 		try{
-			BufferedReader csvReader = new BufferedReader(new FileReader(path));
+			BufferedReader csvReader = new BufferedReader(new FileReader("data-files/station-data.csv"));
 			String row;
 			int count = 0;
 			while ((row = csvReader.readLine()) != null) {
