@@ -14,8 +14,9 @@ public class ValleyBikeSim{
 	private static List<Station> all_stations; //List that contains Station objects
 	private static List<Ride> all_rides; //List that contains Ride objects
 	private static List<Account> all_accounts; //List that contains Account objects
-	private static String path; //path of csv file
-	private static Account currentUser;
+	private static String path = "data-files/station-data.csv"; //path of csv file
+	private static Account currentUser; //the current user
+	private static boolean welcome = false; //whether or not the welcome message has already been printed
 	
 	//Prints out station list in the console
 	public static void viewStationList(){
@@ -294,9 +295,10 @@ public class ValleyBikeSim{
 			int type = Integer.parseInt(temp[0]);
 			int id = Integer.parseInt(temp[1]);
 			String password = temp[2];
+			int membership = Integer.parseInt(temp[3]);
 			
 			//Create a new account
-			Account account = new Account(type, id, password);
+			Account account = new Account(type, id, password, membership);
 			all_accounts.add(account);	
 		}
 	
@@ -583,10 +585,14 @@ public class ValleyBikeSim{
 		}
 	}
 	
+	/**
+	 * Allows a new user to create an account. Only users can create accounts, not admins. 
+	 */
 	public static void createAccount() {
 		int ID = 0;
 		String password = null;
 		int type = 0;
+		int membership = 0;
 		Scanner c = new Scanner(System.in);  // Create a Scanner object
 		
 		Random rand = new Random();
@@ -620,13 +626,14 @@ public class ValleyBikeSim{
 			}
 		}
 		
-		Account user = new Account (type, ID, password);
+		Account user = new Account (type, ID, password, membership);
 		all_accounts.add(user);
 		currentUser = user;
 		
 		try{
 			FileWriter myWriter = new FileWriter("data-files/Accounts.csv");
-			myWriter.append("Type (0 for user and 1 for admin),ID,Password");
+			myWriter.append("Type (0 for user and 1 for admin),ID,Password,Membership(0 for none/1 for Founding Member/2 for Membership/ "
+					+ "3 for occasional");
 			myWriter.append("\n");
 			for(Account a : all_accounts){
 				myWriter.append(accountToString(a));
@@ -642,7 +649,11 @@ public class ValleyBikeSim{
 		System.out.println("Congrats! Your account has been created. Your user ID is " + ID + ".");
 	}
 	
-	public static void logIn() {
+	/**
+	 * Allows a user to log into ValleyBike
+	 * @throws ParseException 
+	 */
+	public static void logIn() throws ParseException {
 		Scanner s = new Scanner(System.in);  // Create a Scanner object
 		String input;
 		Integer ID = 0;
@@ -685,6 +696,7 @@ public class ValleyBikeSim{
 		}
 		
 	}
+		
 	
 	public static void main(String[] args) throws ParseException {
 		//initialize the fields
@@ -734,11 +746,8 @@ public class ValleyBikeSim{
 			createAccount();
 		}
 		
-		String[] num = new String[] {"0","1","2","3","4","5","6"}; //menu options
-		List<String> menuOptions = Arrays.asList(num);
-	
 		try{
-			BufferedReader csvReader = new BufferedReader(new FileReader("data-files/station-data.csv"));
+			BufferedReader csvReader = new BufferedReader(new FileReader(path));
 			String row;
 			int count = 0;
 			while ((row = csvReader.readLine()) != null) {
@@ -749,55 +758,125 @@ public class ValleyBikeSim{
 			}
 			csvReader.close();
 			
-			
 		}
 		catch (Exception e) { 
 	        e.printStackTrace(); 
 	    }
-
-		//Prompt user for selection
-		Scanner a = new Scanner(System.in);  // Create a Scanner object
-		String input;
 		
-		while (true){
-			System.out.println("Please choose from one of the following menu options:");
-			String[] options = new String[] {"0. Quit Program.", "1. View station list.", "2. Add station.", "3. Save station list.", "4. Record ride.", "5. Resolve ride data.", "6. Equalize stations."};
-			int i;
-			for (i=0; i<options.length; i++){
-				System.out.println(options[i]);
-			}
-			while(true){
-				System.out.print("Please enter your selection (0-6): ");
-			    input = a.next();
-			    if(menuOptions.contains(input)){
-			    	break;
+		//menu for users
+		if (currentUser.getType() == 0) {
+			while (true) {
+				if (welcome == false) {
+					System.out.println("Welcome to ValleyBike, user " + currentUser.getID() + ".");
+					welcome = true;
+				}
+				String[] num = new String[] {"0","1","2","3","4","5"}; //menu options
+				List<String> menuOptions = Arrays.asList(num);
+				String input;
+				
+				try{
+					BufferedReader csvReader = new BufferedReader(new FileReader(path));
+					String row;
+					int count = 0;
+					while ((row = csvReader.readLine()) != null) {
+						if(count != 0){
+							addStation(row); //Add station to all_stations
+						}
+						count++;
+					}
+					csvReader.close();
+					
+				}
+				catch (Exception e) { 
+			        e.printStackTrace(); 
 			    }
-			    else{ //Check for valid input
-			    	System.out.println("Please enter a valid option.");
-			    }
+				
+				
+				Scanner c = new Scanner(System.in);  // Create a Scanner object
+				System.out.println("Please choose from one of the following menu options:");
+				String[] options = new String[] {"[0] Quit Program.", "[1] View station list.", "[2] Purchase/Change Membership", "[3] Start Ride.", 
+						"[4] End ride.", "[5] View ride history."};
+				while (true) {
+					for (int i=0; i<options.length; i++){
+						System.out.println(options[i]);
+					}
+					input = s.next();
+					if (menuOptions.contains(input)) {
+						break;
+					}
+				}
+				
+				if (input.equals("0")) { //quit program
+					System.exit(0);
+				} else if (input.equals("1")) { //view station list
+					viewStationList();
+				} else if (input.equals("2")) { //purchase/change membership
+					//TODO: create membership method
+					System.out.println("okay");
+				} else if (input.equals("3")) { //start ride
+					//TODO: call start ride
+					System.out.println("okay");
+				} else if (input.equals("4")) { //end ride
+					//TODO: call end ride
+					System.out.println("okay");
+				} else if (input.equals("5")) { //view ride history
+					//TODO: call view ride history
+					System.out.println("okay");
+				}
 			}
+		}
 		
-			//Respond to user input
-		    if(input.equals("0")){ //exit
-		    	System.exit(0);
-		    }
-		    else if(input.equals("1")){ //view station list
-		    	viewStationList();
-		    }
-		    else if(input.equals("2")){ //calls userAddStation() method which prompts user to add a station to the station list all_stations
-		    	userAddStation();
-		    }
-		    else if(input.equals("3")){ //save station list to a file
-		    	saveStationList();
-		    }
-		    else if(input.equals("4")){ //record a ride
-		    	recordRide();
-		    	listAllRides();
-		    }
-		    else if(input.equals("5")){ //read in ride data and summarize 
-		    	resolveRideData();
-		    }
-		    System.out.println();
+		//Menu for admins
+		else if (currentUser.getType() == 1) {
+			while(true) {
+				if (welcome == false) {
+					System.out.println("Welcome to ValleyBike, admin " + currentUser.getID() + ".");
+					welcome = true;
+				}
+				String[] num = new String[] {"0","1","2","3","4","5","6","7","8"}; //menu options
+				List<String> menuOptions = Arrays.asList(num);
+				String input;
+				
+				Scanner c = new Scanner(System.in);  // Create a Scanner object
+				System.out.println("Please choose from one of the following menu options:");
+				String[] options = new String[] {"[0] Quit Program.", "[1] View station list.", "[2] Add station.", "[3] Save station list.", 
+						"[4] Equalize stations.", "[5] Resolve ride data.", "[6] Track bikes.", "[7] View total ride history.", 
+						"[8] Resolve maintenance issue."};
+				while (true) {
+					for (int i=0; i<options.length; i++){
+						System.out.println(options[i]);
+					}
+					input = s.next();
+					if (menuOptions.contains(choice)) {
+						break;
+					}
+				}
+				
+				if (input.equals("0")) { //quit program
+					System.exit(0);
+				} else if (input.equals("1")) { //view station list
+					viewStationList();
+				} else if (input.equals("2")) { //add station
+					userAddStation();
+				} else if (input.equals("3")) { //save station list
+					saveStationList();
+				} else if (input.equals("4")) { //equalize stations
+					equalizeStations();
+				} else if (input.equals("5")) { //resolve ride data
+					resolveRideData();
+				} else if (input.equals("6")) { //track bikes
+					//TODO: call track bikes
+					System.out.println("okay");
+				} else if (input.equals("7")) { //view total ride history
+					//TODO: call view ride history
+					System.out.println("okay");
+				} else if (input.equals("8")) { //resolve maintenance issue
+					//TODO: call resolve maintenance issue
+					System.out.println("okay");
+				}
+			}
+			
+			
 		}
 	}
 }

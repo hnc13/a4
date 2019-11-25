@@ -3,11 +3,13 @@ public class Account {
 	private int type;
 	private int id;
 	private String password;
+	private int membership;
 	
-	public Account (int type, int id, String password) {
+	public Account (int type, int id, String password, int membership) {
 		this.type = type;
 		this.id = id;
 		this.password = password;
+		this.membership = membership;
 	}
 	
 	public int getType () {
@@ -22,6 +24,10 @@ public class Account {
 		return this.password;
 	}
 	
+	public int getMembership() {
+		return this.membership;
+	}
+	
 	public void setType (int type) {
 		this.type = type;
 	}  
@@ -32,6 +38,10 @@ public class Account {
 	
 	public void setPassword (String pass) {
 		this.password = pass;
+	}
+	
+	public void getMembership(int mem) {
+		this.membership = mem;
 	}
 	
 }
