@@ -839,6 +839,40 @@ public class ValleyBikeSim{
 		}
 		
 	}
+	
+	public static void maintenance() {
+		Scanner c = new Scanner(System.in);  // Create a Scanner object
+		String input;
+		boolean done = false;
+		while(true) {
+			System.out.println("Please enter a station number.");
+			System.out.println("Type 'back' to return to menu.");
+			input = c.next();
+			if (input.equals("back")) {
+				System.out.println();
+				return;
+			}
+			for (Station s : all_stations) {
+				int id = s.getID();
+				if (id == Integer.parseInt(input)) {
+					if (s.getMainReq() == 0) {
+						System.out.println("This station currently has no active maintenance requests.");
+						break;
+					} else {
+						int oldMain = s.getMainReq();
+						s.setReq(oldMain-1);
+						System.out.println("A worker has been sent to perform maintenance.");
+						done = true;
+						break;
+					}
+				}
+			}
+			if (done == true) {
+				break;
+			}
+		}
+		saveStationList();
+	}
 		
 	
 	public static void main(String[] args) throws ParseException {
@@ -1020,8 +1054,7 @@ public class ValleyBikeSim{
 					//TODO: call view ride history
 					System.out.println("okay");
 				} else if (input.equals("8")) { //resolve maintenance issue
-					//TODO: create resolve maintenance issue method
-					System.out.println("okay");
+					maintenance();
 				}
 			}
 			
