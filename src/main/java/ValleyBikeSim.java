@@ -59,7 +59,7 @@ public class ValleyBikeSim{
 	
 	//Turn Account object into a string
 		public static String accountToString(Account obj){
-			String temp = obj.getType() + "," + obj.getID() + "," + obj.getPassword();
+			String temp = obj.getType() + "," + obj.getID() + "," + obj.getPassword() + "," + obj.getMembership() + "," + obj.getBalance();
 			return temp;
 		}
 	
@@ -71,6 +71,25 @@ public class ValleyBikeSim{
 			myWriter.append("\n");
 			for(Station s : all_stations){
 				myWriter.append(objectToString(s));
+				myWriter.append("\n");
+			}
+			myWriter.flush();
+			myWriter.close();
+		} 
+		catch (IOException e) {
+			e.printStackTrace();
+		}	
+	}
+	
+	//Write current account list to a file. Updates current csv file that was read
+	public static void saveAccountList() {
+		try{
+			FileWriter myWriter = new FileWriter("data-files/Accounts.csv");
+			myWriter.append("Type (0 for user and 1 for admin),ID,Password,Membership(0 for none/1 for Founding Member/2 for yearly membership/ "
+					+ "3 for monthly membership,Balance");
+			myWriter.append("\n");
+			for(Account a : all_accounts){
+				myWriter.append(accountToString(a));
 				myWriter.append("\n");
 			}
 			myWriter.flush();
@@ -296,9 +315,10 @@ public class ValleyBikeSim{
 			int id = Integer.parseInt(temp[1]);
 			String password = temp[2];
 			int membership = Integer.parseInt(temp[3]);
+			int balance = Integer.parseInt(temp[4]);
 			
 			//Create a new account
-			Account account = new Account(type, id, password, membership);
+			Account account = new Account(type, id, password, membership, balance);
 			all_accounts.add(account);	
 		}
 	
@@ -593,6 +613,7 @@ public class ValleyBikeSim{
 		String password = null;
 		int type = 0;
 		int membership = 0;
+		int balance = 0;
 		Scanner c = new Scanner(System.in);  // Create a Scanner object
 		
 		Random rand = new Random();
@@ -626,25 +647,11 @@ public class ValleyBikeSim{
 			}
 		}
 		
-		Account user = new Account (type, ID, password, membership);
+		Account user = new Account (type, ID, password, membership, balance);
 		all_accounts.add(user);
 		currentUser = user;
 		
-		try{
-			FileWriter myWriter = new FileWriter("data-files/Accounts.csv");
-			myWriter.append("Type (0 for user and 1 for admin),ID,Password,Membership(0 for none/1 for Founding Member/2 for Membership/ "
-					+ "3 for occasional");
-			myWriter.append("\n");
-			for(Account a : all_accounts){
-				myWriter.append(accountToString(a));
-				myWriter.append("\n");
-			}
-			myWriter.flush();
-			myWriter.close();
-		} 
-		catch (IOException e) {
-			e.printStackTrace();
-		}	
+		saveAccountList();
 		
 		System.out.println("Congrats! Your account has been created. Your user ID is " + ID + ".");
 	}
@@ -695,6 +702,109 @@ public class ValleyBikeSim{
 			System.out.println("That password is incorrect. Please try again.");
 		}
 		
+	}
+	
+	/**
+	 * Allows the user to purchase a membership.
+	 */
+	public static void buyMem () {
+		System.out.println("We have 3 membership options available.");
+		
+		int mem = 0;
+		String choice;
+		String[] num = new String[] {"1","2", "3"}; //membership options
+		List<String> memOptions = Arrays.asList(num);
+		
+		String[] mems = new String[] {"Founding Member", "Annual", "Monthly"};
+		List<String> memsOptions = Arrays.asList(mems);
+		
+		Scanner s = new Scanner(System.in);  // Create a Scanner object
+		while (true) {
+			System.out.println("Please select a membership");
+			System.out.println("[1]Founding Member: $90 annually. The first 60 minutes of each ride are included.");
+			System.out.println("[2]Annual Membership: $80 annually. The first 45 minutes of each ride are included.");
+			System.out.println("[3]Monthly Membership: $20 monthly. The first 45 minutes of each ride are included.");
+			System.out.println("Type 'back' to return to menu.");
+			choice = s.next();
+			if (choice.equals("back")) {
+				System.out.println();
+				return;
+			}
+			if (memOptions.contains(choice)) {
+				mem = Integer.parseInt(choice);
+				System.out.println("You have selected the " + memsOptions.get(Integer.parseInt(choice)-1) + " membership. Are you sure? Y/N");
+				Scanner c = new Scanner(System.in);  // Create a Scanner object
+				String input = c.next();
+				if (input.equals("Y") || input.equals("y") || input.equals("yes") || input.equals("Yes")) {
+					currentUser.setMembership(Integer.parseInt(choice)-1);
+					break;
+				} 
+				else if (input.equals("N") || input.equals("n") || input.equals("no") || input.equals("No")) {
+					continue;
+				}
+			}
+			System.out.println("That input is incorrect. Please try again.");
+		}
+		for (Account a : all_accounts) {
+			if (a == currentUser) {
+				a.setMembership(mem);
+			}
+		}
+		saveAccountList();
+		System.out.println("Congratulations! You now have a ValleyBike " + memsOptions.get(Integer.parseInt(choice)-1) + " membership!");
+		}
+	
+	
+	/**
+	 * Allows the user to change their membership.
+	 */
+	public static void changeMem () {
+		String[] num = new String[] {"1","2", "3"}; //membership options
+		List<String> memOptions = Arrays.asList(num);
+		
+		String[] mems = new String[] {"Founding Member", "Annual", "Monthly"};
+		List<String> memsOptions = Arrays.asList(mems);
+		
+		System.out.println("Your current membership is: " + memsOptions.get(currentUser.getMembership()-1) +".");
+		System.out.println("We have 3 membership options available.");
+		
+		int mem = 0;
+		String choice;
+		
+		Scanner s = new Scanner(System.in);  // Create a Scanner object
+		while (true) {
+			System.out.println("Please select a membership");
+			System.out.println("[1]Founding Member: $90 annually. The first 60 minutes of each ride are included.");
+			System.out.println("[2]Annual Membership: $80 annually. The first 45 minutes of each ride are included.");
+			System.out.println("[3]Monthly Membership: $20 monthly. The first 45 minutes of each ride are included.");
+			System.out.println("Type 'back' to return to menu.");
+			choice = s.next();
+			if (choice.equals("back")) {
+				System.out.println();
+				return;
+			}
+			if (memOptions.contains(choice)) {
+				mem = Integer.parseInt(choice);
+				System.out.println("You have selected the " + memsOptions.get(Integer.parseInt(choice)-1) + " membership. Are you sure? Y/N");
+				Scanner c = new Scanner(System.in);  // Create a Scanner object
+				String input = c.next();
+				if (input.equals("Y") || input.equals("y") || input.equals("yes") || input.equals("Yes")) {
+					currentUser.setMembership(Integer.parseInt(choice)-1);
+					break;
+				} 
+				else if (input.equals("N") || input.equals("n") || input.equals("no") || input.equals("No")) {
+					continue;
+				}
+			}
+			System.out.println("That input is incorrect. Please try again.");
+		}
+		for (Account a : all_accounts) {
+			if (a == currentUser) {
+				a.setMembership(mem);
+			}
+		}
+		saveAccountList();
+		System.out.println("Congratulations! You now have a ValleyBike " + memsOptions.get(Integer.parseInt(choice)-1) + " membership!");
 	}
 		
 	
@@ -792,6 +902,7 @@ public class ValleyBikeSim{
 			    }
 				
 				
+				
 				Scanner c = new Scanner(System.in);  // Create a Scanner object
 				System.out.println("Please choose from one of the following menu options:");
 				String[] options = new String[] {"[0] Quit Program.", "[1] View station list.", "[2] Purchase/Change Membership", "[3] Start Ride.", 
@@ -811,8 +922,11 @@ public class ValleyBikeSim{
 				} else if (input.equals("1")) { //view station list
 					viewStationList();
 				} else if (input.equals("2")) { //purchase/change membership
-					//TODO: create membership method
-					System.out.println("okay");
+					if (currentUser.getMembership() == 0) {
+						buyMem();
+					} else if (currentUser.getMembership() > 0) {
+						changeMem();
+					}
 				} else if (input.equals("3")) { //start ride
 					//TODO: call start ride
 					System.out.println("okay");
@@ -871,7 +985,7 @@ public class ValleyBikeSim{
 					//TODO: call view ride history
 					System.out.println("okay");
 				} else if (input.equals("8")) { //resolve maintenance issue
-					//TODO: call resolve maintenance issue
+					//TODO: create resolve maintenance issue method
 					System.out.println("okay");
 				}
 			}
