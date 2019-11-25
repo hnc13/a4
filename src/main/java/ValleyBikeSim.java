@@ -15,6 +15,7 @@ public class ValleyBikeSim{
 	private static List<Ride> all_rides; //List that contains Ride objects
 	private static List<Account> all_accounts; //List that contains Account objects
 	private static String path; //path of csv file
+	private static Account currentUser;
 	
 	//Prints out station list in the console
 	public static void viewStationList(){
@@ -621,6 +622,7 @@ public class ValleyBikeSim{
 		
 		Account user = new Account (type, ID, password);
 		all_accounts.add(user);
+		currentUser = user;
 		
 		try{
 			FileWriter myWriter = new FileWriter("data-files/Accounts.csv");
@@ -641,9 +643,47 @@ public class ValleyBikeSim{
 	}
 	
 	public static void logIn() {
-		System.out.println("Please log in to your account.");
-		System.out.println("User ID: ");
-		System.out.println("Password: ");
+		Scanner s = new Scanner(System.in);  // Create a Scanner object
+		String input;
+		Integer ID = 0;
+		boolean trueID = false;
+		boolean rightPass = false;
+		
+		System.out.println("Please enter your user ID: ");
+		while (true) {
+			input = s.next();
+			for (Account a : all_accounts) {
+				if (Integer.toString(a.getID()).equals(input)) {
+					ID = a.getID();
+					trueID = true;
+					break;
+				}
+			}
+			if (trueID == true) {
+				break;
+			}
+			System.out.println("That user ID is incorrect. Please try again.");
+		}
+		
+		System.out.println("Please enter your password: ");
+		Scanner c = new Scanner(System.in);
+		while (true) {
+			input = c.next();
+			for (Account a : all_accounts) {
+				if (ID.equals(a.getID())) {
+					if (input.equals(a.getPassword())) {
+						rightPass = true;
+						currentUser = a;
+						break;
+					}
+				}
+			}
+			if (rightPass == true) {
+				break;
+			}
+			System.out.println("That password is incorrect. Please try again.");
+		}
+		
 	}
 	
 	public static void main(String[] args) throws ParseException {
@@ -693,9 +733,6 @@ public class ValleyBikeSim{
 		} else if (choice.equals("1")) { //create a new account
 			createAccount();
 		}
-		
-//		System.out.print("Please enter a file path: ");
-//		path = s.next();
 		
 		String[] num = new String[] {"0","1","2","3","4","5","6"}; //menu options
 		List<String> menuOptions = Arrays.asList(num);
