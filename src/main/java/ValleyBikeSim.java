@@ -52,7 +52,7 @@ public class ValleyBikeSim {
 	}
 	// View All Ride History
 	public static void viewRideHistory() {
-		System.out.printf("%s	%s	%s	%s	%s	%s	%s	%s	%n", "User ID", "Bike ID", "Start Station", "Dest Station", "", "Duration");
+		System.out.printf("%s	%s	%s	%s	%s	%s	%s	%s	%n", "User ID", "Bike ID", "Start Station", "Start time", "", "End Time");
 		
 		for (RideHistory r: ride_history) {
 			System.out.printf("%s	", r.getUserID());
@@ -111,7 +111,7 @@ public class ValleyBikeSim {
 	public static String rideHistoryToString(RideHistory obj) {
 		
 		String temp = obj.getUserID() + "," + obj.getBikeID() + "," + obj.getStartStation() + "," + obj.getDestStation() + ","
-				+ obj.getStartTime()+ obj.getEndTime();
+				+ obj.getStartTime()+ "," + obj.getEndTime();
 		return temp;
 	}
 
@@ -1058,6 +1058,7 @@ public class ValleyBikeSim {
 						
 						ride_history.add(obj);
 						saveRideHistory();
+						break;
 					} else {
 						System.out.println("Invalid transaction. No bikes are available at this station.");
 					}
@@ -1086,7 +1087,7 @@ public class ValleyBikeSim {
 			int count = 0;
 			while ((row = csvReader.readLine()) != null) {
 				if (count != 0) {
-					addAccount(row); // Add station to all_stations
+					addAccount(row); // Add account to all_accounts
 				}
 				count++;
 			}
@@ -1143,22 +1144,6 @@ public class ValleyBikeSim {
 				String[] num = new String[] { "0", "1", "2", "3", "4", "5", "6" }; // menu options
 				List<String> menuOptions = Arrays.asList(num);
 				String input;
-
-				try {
-					BufferedReader csvReader = new BufferedReader(new FileReader(path));
-					String row;
-					int count = 0;
-					while ((row = csvReader.readLine()) != null) {
-						if (count != 0) {
-							addStation(row); // Add station to all_stations
-						}
-						count++;
-					}
-					csvReader.close();
-
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
 				
 				try {
 					BufferedReader csvReader = new BufferedReader(new FileReader("data-files/ride-history.csv"));
@@ -1175,6 +1160,7 @@ public class ValleyBikeSim {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
+				
 
 				Scanner c = new Scanner(System.in); // Create a Scanner object
 				System.out.println("Please choose from one of the following menu options:");
