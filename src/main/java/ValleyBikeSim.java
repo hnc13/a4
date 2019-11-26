@@ -500,10 +500,14 @@ public class ValleyBikeSim {
 				time_1 = f.parse(arr[3]);
 				time_2 = f.parse(arr[4]);
 			} catch (ParseException e) {
-				System.out.print("Please make sure time format follows yyyy-[m]m-[d]d hh:mm:ss");
+				System.out.print("Please make sure time format follows yyyy-[m]m-[d]d hh:mm:ss.\n");
 				return;
 			}
 			avg_min = (time_2.getTime() - time_1.getTime()) / (60 * 1000) % 60 + avg_min;
+		}
+		if (time_1.getTime() >= time_2.getTime()) {
+			System.out.println("Please make sure all rides are possible.\n");
+			return;
 		}
 		avg_min = avg_min / rides; // Calculate average ride time
 		System.out.println(
@@ -807,18 +811,22 @@ public class ValleyBikeSim {
 	 * Allows the user to purchase a membership.
 	 */
 	public static void buyMem() {
-		System.out.println("We have 3 membership options available.");
-
 		int mem = 0;
 		String choice;
 		String[] num = new String[] { "1", "2", "3" }; // membership options
 		List<String> memOptions = Arrays.asList(num);
 
-		String[] mems = new String[] { "Founding Member", "Annual", "Monthly" };
+		String[] mems = new String[] { "Founding Member", "Annual", "Monthly" }; // membership types
 		List<String> memsOptions = Arrays.asList(mems);
 
 		String[] costs = new String[] { "90", "80", "20" }; // membership costs
 		List<String> costOptions = Arrays.asList(costs);
+		
+		if (currentUser.getMembership() != 0) {
+			System.out.println("Your current membership is: " + memsOptions.get(currentUser.getMembership() - 1) + ".");
+		}
+		
+		System.out.println("We have 3 membership options available.");
 
 		Scanner s = new Scanner(System.in); // Create a Scanner object
 		while (true) {
@@ -860,63 +868,8 @@ public class ValleyBikeSim {
 	}
 
 	/**
-	 * Allows the user to change their membership.
+	 * Allows the user to make a payment.
 	 */
-	public static void changeMem() {
-		String[] num = new String[] { "1", "2", "3" }; // membership options
-		List<String> memOptions = Arrays.asList(num);
-
-		String[] mems = new String[] { "Founding Member", "Annual", "Monthly" }; // membership names
-		List<String> memsOptions = Arrays.asList(mems);
-
-		String[] costs = new String[] { "90", "80", "20" }; // membership costs
-		List<String> costOptions = Arrays.asList(costs);
-
-		System.out.println("Your current membership is: " + memsOptions.get(currentUser.getMembership() - 1) + ".");
-		System.out.println("We have 3 membership options available.");
-
-		int mem = 0;
-		String choice;
-
-		Scanner s = new Scanner(System.in); // Create a Scanner object
-		while (true) {
-			System.out.println("Please select a membership");
-			System.out.println("[1]Founding Member: $90 annually. The first 60 minutes of each ride are included.");
-			System.out.println("[2]Annual Membership: $80 annually. The first 45 minutes of each ride are included.");
-			System.out.println("[3]Monthly Membership: $20 monthly. The first 45 minutes of each ride are included.");
-			System.out.println("Type 'back' to return to menu.");
-			choice = s.next();
-			if (choice.equals("back")) {
-				System.out.println();
-				return;
-			}
-			if (memOptions.contains(choice)) {
-				mem = Integer.parseInt(choice);
-				System.out.println("You have selected the " + memsOptions.get(Integer.parseInt(choice) - 1)
-						+ " membership. Are you sure? Y/N");
-				Scanner c = new Scanner(System.in); // Create a Scanner object
-				String input = c.next();
-				if (input.equals("Y") || input.equals("y") || input.equals("yes") || input.equals("Yes")) {
-					currentUser.setMembership(Integer.parseInt(choice) - 1);
-					break;
-				} else if (input.equals("N") || input.equals("n") || input.equals("no") || input.equals("No")) {
-					continue;
-				}
-			}
-			System.out.println("That input is incorrect. Please try again.");
-		}
-		for (Account a : all_accounts) {
-			if (a == currentUser) {
-				a.setMembership(mem);
-			}
-		}
-		int cost = Integer.parseInt(costOptions.get(Integer.parseInt(choice) - 1));
-		payment(cost);
-		saveAccountList();
-		System.out.println("Congratulations! You now have a ValleyBike " + memsOptions.get(Integer.parseInt(choice) - 1)
-				+ " membership!");
-	}
-
 	public static void payment(int cost) {
 		Random rand = new Random();
 		int chance = rand.nextInt(9);
@@ -1216,18 +1169,15 @@ public class ValleyBikeSim {
 				} else if (input.equals("1")) { // view station list
 					viewStationList();
 				} else if (input.equals("2")) { // purchase/change membership
-					if (currentUser.getMembership() == 0) {
-						buyMem();
-					} else if (currentUser.getMembership() > 0) {
-						changeMem();
-					}
+					buyMem();
 				} else if (input.equals("3")) { // start ride
-						rentBike();
+					rentBike();
 				} else if (input.equals("4")) { // end ride
-						returnBike();
-				} else if (input.equals("5")) { // view balance
-					System.out.println("Your balance is $" + currentUser.getBalance() + ".");
-				}
+					returnBike();
+				} 
+//				else if (input.equals("5")) { // view balance
+//					System.out.println("Your balance is $" + currentUser.getBalance() + ".");
+//				}
 			}
 		}
 
