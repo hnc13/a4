@@ -981,7 +981,7 @@ public class ValleyBikeSim {
 						String time = dtf.format(startTime);
 						
 						// Create a new ride_history obj
-						RideHistory obj = new RideHistory(user,0,stationId,0,time,"0");
+						RideHistory obj = new RideHistory(user,0,stationId,0,time,null);
 						
 						  
 						
@@ -1005,12 +1005,19 @@ public class ValleyBikeSim {
 			Scanner userInput = new Scanner(System.in);  
 			user = currentUser.getID();
 			for(RideHistory r: ride_history){
-				if(r.getUserID() == user && r.getEndTime() != null){ //Check to see if the user has an in-progress ride
-				rideNotInProgress = 1;
-				// If ride is not in progress do not allow user to rent bike:
-				System.out.println("You did not check out any bike. Please rent a bike before trying to return it");
-				end =false;			
+				if(r.getUserID() == user){
+					if(r.getEndTime()!=null) {
+						rideNotInProgress = 1;
+						// If ride is not in progress do not allow user to rent bike:
+						System.out.println(rideNotInProgress);
+						System.out.println("You did not check out any bike. Please rent a bike before trying to return it.");
+						end=false;
+						
+					}
+				
+						
 				}
+				break;
 			}
 			while(end){ //make sure the station exists
 				System.out.print("Please enter station ID at current location: ");
@@ -1031,7 +1038,7 @@ public class ValleyBikeSim {
 						if(station.getID() == stationId){
 							if(station.getAvDocs() != 0){ //If there is capacity at the dock
 								System.out.print('\n');
-								System.out.println("Thank you for riding. Please check your email for a recipt");
+								System.out.println("Thank you for riding. Please check your email for a recipt.");
 								station.setPedelecs(station.getPeds()+1); //add one to pedelecs count
 								station.setDocks(station.getAvDocs()-1); //subtract one from available docks
 								DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
@@ -1046,8 +1053,11 @@ public class ValleyBikeSim {
 								System.out.println("No capacity here. Please park at another station. You can print the "
 													+ "station list to see capacity.");
 							}
+							
 						}
+					
 					}
+					break;
 				}
 			}
 		}
