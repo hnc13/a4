@@ -52,7 +52,7 @@ public class ValleyBikeSim {
 	}
 	// View All Ride History
 	public static void viewRideHistory() {
-		System.out.printf("%s	%s	%s	%s	%s	%s	%s	%s	%n", "User ID", "Bike ID", "Start Station", "Start time", "", "End Time");
+		System.out.printf("%s %s %s	%s	%s	%s %n", "User ID", "Bike ID", "Start Station", "End Station", "Start time", "End Time");
 		
 		for (RideHistory r: ride_history) {
 			System.out.printf("%s	", r.getUserID());
@@ -189,6 +189,7 @@ public class ValleyBikeSim {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		System.out.println("Your station has been saved.");
 	}
 	
 	// Updates current ride-history.csv file that was read
@@ -280,23 +281,8 @@ public class ValleyBikeSim {
 			}
 		}
 
-		// Collect user input for number of bikes (catches non-integer inputs)
-		int bikes = -1;
-		while (bikes == -1) {
-			System.out.println("Number of bikes: ");
-			input = c.nextLine();
-			if (input.equals("back")) {
-				System.out.println();
-				return;
-			}
-			try { // check that input is a number
-				bikes = Integer.parseInt(input);
-			} catch (Exception e) {
-				System.out
-						.println("We're sorry. '" + input + "' is not an accepted number of bikes. Please try again.");
-				System.out.println();
-			}
-		}
+		// Assuming # of bikes will always be 0
+		int bikes = 0;
 
 		// Collect user input for number of pedelecs (catches non-integer inputs)
 		int pedelecs = -1;
@@ -464,7 +450,6 @@ public class ValleyBikeSim {
 	
 		// Add an Ride History object to ride_history
 		public static void addRideHistory(String data) {
-			 
 			String[] temp = data.split(","); // turn data into an array
 			// Parse out the string
 			int userID = Integer.parseInt(temp[0]);
@@ -528,16 +513,16 @@ public class ValleyBikeSim {
 	
 	// Read a data file with ride information and calls summarizeRides() method
 	public static void resolveRideData() throws ParseException {
-
+		List<String[]> data = new ArrayList<String[]>(); // Holds rides listed in file
+		while(true) {
 		// Prompt user for file with ride information
 		System.out.print("Enter the file name (including extension) of the file located in data-files: ");
 		Scanner a = new Scanner(System.in);
-		String file = a.next();
-		String path = "data-files/" + file;
-		List<String[]> data = new ArrayList<String[]>(); // Holds rides listed in file
 
 		// Read file and save data
 		try {
+			String file = a.next();
+			String path = "data-files/" + file;
 			BufferedReader csvReader = new BufferedReader(new FileReader(path));
 			String row;
 			int count = 0;
@@ -551,7 +536,10 @@ public class ValleyBikeSim {
 			}
 			csvReader.close();
 		} catch (Exception e) {
-			e.printStackTrace();
+			System.out.println("That file does not exist. Please try again.\n");
+			continue;
+			} 
+		break;
 		}
 		summarizeRides(data); // call for summary of rides
 
@@ -994,7 +982,7 @@ public class ValleyBikeSim {
 	 * station ID is valid and station has available pedelecs.
 	 */
 	public static void rentBike() {
-		int user = 0;
+		int user = currentUser.getID();
 		int stationId = 0;
 		int rideNotInProgress = 1; // 1 = new ride; 0 = in-progress ride
 		boolean end = true;
@@ -1002,20 +990,8 @@ public class ValleyBikeSim {
 		// Create Scanner object
 		Scanner userInput = new Scanner(System.in);
 
-		while (true) {
-			// Prompt user for ID
-			System.out.print("Please enter your user ID: ");
-			int userID = Integer.parseInt(userInput.next());
-			if (userExists(userID)) {
-				user = userID;
-				break;
-			} else {
-				System.out.println("No such user ID found. Please enter valid user ID or Sign up on ValleyBike.com to receive unique user ID.");
-			}
-		}
-
 		for (RideHistory rideObj : ride_history) {
-			if (rideObj.getUserID() == user && rideObj.getEndTime() == "0") { // Check to see if the user has an in-progress ride
+			if (rideObj.getUserID() == user && rideObj.getEndTime() == null) { // Check to see if the user has an in-progress ride
 				rideNotInProgress = 0;
 
 				// If ride is in progress do not allow user to rent bike:
@@ -1066,6 +1042,62 @@ public class ValleyBikeSim {
 			}
 		}
 	}
+	//******************************************************************************************************************
+		public static void returnBike() {
+			int user = 0;
+			int stationId = 0;
+			int rideNotInProgress = 0; //1 = new ride; 0 = in-progress ride
+			boolean end = true;
+			// Create Scanner object
+			Scanner userInput = new Scanner(System.in);  
+			user = currentUser.getID();
+			for(RideHistory r: ride_history){
+				if(r.getUserID() == user && r.getEndTime() != null){ //Check to see if the user has an in-progress ride
+				rideNotInProgress = 1;
+				// If ride is not in progress do not allow user to rent bike:
+				System.out.println("You did not check out any bike. Please rent a bike before trying to return it");
+				end =false;			
+				}
+			}
+			while(end){ //make sure the station exists
+				System.out.print("Please enter station ID at current location: ");
+				int id = Integer.parseInt(userInput.next());
+				if(stationExists(id)){
+					stationId = id;
+							end=false;
+				}
+				else{
+					System.out.print("No such station exists. \nPlease enter valid station ID.");
+				}
+			}
+			//Check to see if user has an in-progress ride. If so, we are recording the end of a ride.
+			if(rideNotInProgress ==0) {
+				for(RideHistory r: ride_history){
+					//Edit station and ride data
+					for(Station station: all_stations){
+						if(station.getID() == stationId){
+							if(station.getAvDocs() != 0){ //If there is capacity at the dock
+								System.out.print('\n');
+								System.out.println("Thank you for riding. Please check your email for a recipt");
+								station.setPedelecs(station.getPeds()+1); //add one to pedelecs count
+								station.setDocks(station.getAvDocs()-1); //subtract one from available docks
+								DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+								LocalDateTime startTime = LocalDateTime.now();
+								String time = dtf.format(startTime);
+								r.setEnd(time);
+								r.setTo(stationId);
+								saveRideHistory();
+								break;
+							}
+							else{ //If there is no capacity
+								System.out.println("No capacity here. Please park at another station. You can print the "
+													+ "station list to see capacity.");
+							}
+						}
+					}
+				}
+			}
+		}
 
 //-----------------------------------------------------------------------------------------------------------------	
 
@@ -1081,6 +1113,7 @@ public class ValleyBikeSim {
 		System.out.println("Welcome to the ValleyBike Simulator.");
 		System.out.println("Please log in or create an account.");
 
+		//fill all_accounts
 		try {
 			BufferedReader csvReader = new BufferedReader(new FileReader("data-files/Accounts.csv"));
 			String row;
@@ -1116,6 +1149,7 @@ public class ValleyBikeSim {
 			createAccount();
 		}
 
+		//fill all_stations
 		try {
 			BufferedReader csvReader = new BufferedReader(new FileReader(path));
 			String row;
@@ -1123,6 +1157,23 @@ public class ValleyBikeSim {
 			while ((row = csvReader.readLine()) != null) {
 				if (count != 0) {
 					addStation(row); // Add station to all_stations
+				}
+				count++;
+			}
+			csvReader.close();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		//Fill ride_history
+		try {
+			BufferedReader csvReader = new BufferedReader(new FileReader("data-files/ride-history.csv"));
+			String row;
+			int count = 0;
+			while ((row = csvReader.readLine()) != null) {
+				if (count != 0) {
+					addRideHistory(row); // Add ride_history obj to ride_history
 				}
 				count++;
 			}
@@ -1144,29 +1195,12 @@ public class ValleyBikeSim {
 				String[] num = new String[] { "0", "1", "2", "3", "4", "5", "6" }; // menu options
 				List<String> menuOptions = Arrays.asList(num);
 				String input;
-				
-				try {
-					BufferedReader csvReader = new BufferedReader(new FileReader("data-files/ride-history.csv"));
-					String row;
-					int count = 0;
-					while ((row = csvReader.readLine()) != null) {
-						if (count != 0) {
-							addRideHistory(row); // Add ride_history obj to ride_history
-						}
-						count++;
-					}
-					csvReader.close();
-
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-				
 
 				Scanner c = new Scanner(System.in); // Create a Scanner object
 				System.out.println("Please choose from one of the following menu options:");
 				String[] options = new String[] { "[0] Quit Program.", "[1] View station list.",
-						"[2] Purchase/Change Membership.", "[3] Start Ride.", "[4] End ride.", "[5] View ride history.",
-						"[6] View balance." };
+						"[2] Purchase/Change Membership.", "[3] Start Ride.", "[4] End ride.", 
+						"[5] View balance." };
 				while (true) {
 					for (int i = 0; i < options.length; i++) {
 						System.out.println(options[i]);
@@ -1188,14 +1222,10 @@ public class ValleyBikeSim {
 						changeMem();
 					}
 				} else if (input.equals("3")) { // start ride
-					rentBike();
+						rentBike();
 				} else if (input.equals("4")) { // end ride
-					// TODO: call end ride
-					System.out.println("okay");
-				} else if (input.equals("5")) { // view ride history
-					// TODO: call view ride history
-					System.out.println("okay");
-				} else if (input.equals("6")) { // view balance
+						returnBike();
+				} else if (input.equals("5")) { // view balance
 					System.out.println("Your balance is $" + currentUser.getBalance() + ".");
 				}
 			}
@@ -1216,7 +1246,7 @@ public class ValleyBikeSim {
 				System.out.println("Please choose from one of the following menu options:");
 				String[] options = new String[] { "[0] Quit Program.", "[1] View station list.", "[2] Add station.",
 						"[3] Save station list.", "[4] Equalize stations.", "[5] Resolve ride data.",
-						"[6] Track bikes.", "[7] View total ride history.", "[8] Resolve maintenance issue." };
+						"[6] View total ride history.", "[7] Resolve maintenance issue." };
 				while (true) {
 					for (int i = 0; i < options.length; i++) {
 						System.out.println(options[i]);
@@ -1238,14 +1268,10 @@ public class ValleyBikeSim {
 				} else if (input.equals("4")) { // equalize stations
 					equalizeStations();
 				} else if (input.equals("5")) { // resolve ride data
-					resolveRideData();
-				} else if (input.equals("6")) { // track bikes
-					// TODO: call track bikes
-					System.out.println("okay");
-				} else if (input.equals("7")) { // view total ride history
+						resolveRideData();
+				} else if (input.equals("6")) { // view total ride history
 					viewRideHistory();
-					
-				} else if (input.equals("8")) { // resolve maintenance issue
+				} else if (input.equals("7")) { // resolve maintenance issue
 					maintenance();
 				}
 			}
