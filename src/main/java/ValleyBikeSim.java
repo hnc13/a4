@@ -865,14 +865,18 @@ private static void extracted() {
 			}
 			if (memOptions.contains(choice)) {
 				mem = Integer.parseInt(choice);
+				if (currentUser.getMembership() == mem) {
+						System.out.println("\nThat is your current membership.\n");
+						continue;
+				}
 				System.out.println("You have selected the " + memsOptions.get(Integer.parseInt(choice) - 1)
 						+ " membership. Are you sure? Y/N");
 				Scanner c = new Scanner(System.in); // Create a Scanner object
 				String input = c.next();
-				if (input.equals("Y") || input.equals("y") || input.equals("yes") || input.equals("Yes")) {
+				if (input.equalsIgnoreCase("y") || input.equalsIgnoreCase("yes")) {
 					currentUser.setMembership(Integer.parseInt(choice) - 1);
 					break;
-				} else if (input.equals("N") || input.equals("n") || input.equals("no") || input.equals("No")) {
+				} else if (input.equalsIgnoreCase("n") || input.equalsIgnoreCase("no")) {
 					continue;
 				}
 			}
@@ -888,6 +892,41 @@ private static void extracted() {
 		saveAccountList();
 		System.out.println("Congratulations! You now have a ValleyBike " + memsOptions.get(Integer.parseInt(choice) - 1)
 				+ " membership!");
+	}
+	
+	/**
+	 * Allows the user to cancel their membership.
+	 */
+	public static void cancelMem () {
+		String[] mems = new String[] { "Founding Member", "Annual", "Monthly" }; // membership types
+		List<String> memsOptions = Arrays.asList(mems);
+		
+		while (true) {
+			if (currentUser.getMembership() == 0) {
+				System.out.println("You don't have a membership to cancel!");
+				return;
+			}
+			if (currentUser.getMembership() != 0) {
+				System.out.println("Your current membership is: " + memsOptions.get(currentUser.getMembership() - 1) + ".");
+				System.out.println("Are you sure you want to cancel your membership? Y/N");
+				Scanner c = new Scanner(System.in); // Create a Scanner object
+				String input = c.next();
+				if (input.equalsIgnoreCase("back") || input.equalsIgnoreCase("b")) {
+					System.out.println();
+					extracted();
+					return;
+				}
+				if (input.equalsIgnoreCase("y") || input.equalsIgnoreCase("yes")) {
+					currentUser.setMembership(0);
+					System.out.println("\nYour membership has been canceled.\n");
+					return;
+				} else if (input.equalsIgnoreCase("n") || input.equalsIgnoreCase("no")) {
+					return;
+				}
+			}
+				
+			}
+		
 	}
 
 	/**
@@ -1103,7 +1142,7 @@ private static void extracted() {
 						if(station.getID() == stationId){
 							if(station.getAvDocs() != 0){ //If there is capacity at the dock
 								System.out.print('\n');
-								System.out.println("Thank you for riding. Please check your email for a recipt.");
+								System.out.println("Thank you for riding. Please check your email for a receipt.");
 								station.setPedelecs(station.getPeds()+1); //add one to pedelecs count
 								station.setDocks(station.getAvDocs()-1); //subtract one from available docks
 								DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
@@ -1227,8 +1266,8 @@ private static void extracted() {
 				Scanner c = new Scanner(System.in); // Create a Scanner object
 				System.out.println("Please choose from one of the following menu options:");
 				String[] options = new String[] { "[0] Quit Program.", "[1] View station list.",
-						"[2] Purchase/Change Membership.", "[3] Start Ride.", "[4] End ride.", 
-						"[5] View balance." };
+						"[2] Purchase/Change Membership.", "[3] Cancel Membership.", "[4] Start ride.", 
+						"[5] End ride." };
 				while (true) {
 					for (int i = 0; i < options.length; i++) {
 						System.out.println(options[i]);
@@ -1245,9 +1284,11 @@ private static void extracted() {
 					viewStationList();
 				} else if (input.equals("2")) { // purchase/change membership
 					buyMem();
-				} else if (input.equals("3")) { // start ride
+				} else if (input.equals("3")) { // cancel membership
+					cancelMem();
+				} else if (input.equals("4")) { // start ride
 					rentBike();
-				} else if (input.equals("4")) { // end ride
+				} else if (input.equals("5")) { // end ride
 					returnBike();
 				} 
 //				else if (input.equals("5")) { // view balance
