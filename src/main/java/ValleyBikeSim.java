@@ -245,8 +245,9 @@ public class ValleyBikeSim {
 		while (id == -1) {
 			System.out.println("Station ID: ");
 			input = c.nextLine();
-			if (input.equals("back")) {
+			if (input.equalsIgnoreCase("back") || input.equalsIgnoreCase("b")) {
 				System.out.println();
+				extracted();
 				return;
 			}
 			try {
@@ -256,10 +257,12 @@ public class ValleyBikeSim {
 						System.out.println("'" + input + "' is already in use. Please try again.");
 						System.out.println();
 						id = -1;
+						break;
 					}
-				}
+				} 
 			} catch (Exception e) { // check that input is a number
 				System.out.println("'" + input + "' is not an accepted Station ID. Please try again.");
+				continue;
 			}
 		}
 
@@ -268,8 +271,9 @@ public class ValleyBikeSim {
 		while (name == null) {
 			System.out.println("Station Name: ");
 			name = c.nextLine();
-			if (name.equals("back")) {
+			if (name.equalsIgnoreCase("back") || name.equalsIgnoreCase("b")) {
 				System.out.println();
+				extracted();
 				return;
 			}
 			for (Station s : all_stations) { // check that name is unique
@@ -289,8 +293,9 @@ public class ValleyBikeSim {
 		while (pedelecs == -1) {
 			System.out.println("Number of pedelecs: ");
 			input = c.nextLine();
-			if (input.equals("back")) {
+			if (input.equalsIgnoreCase("back") || input.equalsIgnoreCase("b")) {
 				System.out.println();
+				extracted();
 				return;
 			}
 			try { // check that input is a number
@@ -308,8 +313,9 @@ public class ValleyBikeSim {
 		while (maintainenceString == null) {
 			System.out.println("Does this station require maintenance? (yes/no): ");
 			maintainenceString = c.nextLine();
-			if (maintainenceString.equals("back")) {
+			if (maintainenceString.equalsIgnoreCase("back") || maintainenceString.equalsIgnoreCase("b")) {
 				System.out.println();
+				extracted();
 				return;
 			} else if ((maintainenceString.equals("yes")) || (maintainenceString.equals("Yes"))) { // check that input
 																									// is either 'yes'
@@ -331,8 +337,9 @@ public class ValleyBikeSim {
 		while (capacity == -1) {
 			System.out.println("Capacity of station: ");
 			input = c.nextLine();
-			if (input.equals("back")) {
+			if (input.equalsIgnoreCase("back") || input.equalsIgnoreCase("b")) {
 				System.out.println();
+				extracted();
 				return;
 			}
 			try { // check that input is a number
@@ -355,8 +362,9 @@ public class ValleyBikeSim {
 		while (address == null) {
 			System.out.println("Station Address: ");
 			address = c.nextLine();
-			if (address.equals("back")) {
+			if (address.equalsIgnoreCase("back") || address.equalsIgnoreCase("b")) {
 				System.out.println();
+				extracted();
 				return;
 			}
 			for (Station s : all_stations) { // check that address is unique
@@ -379,8 +387,9 @@ public class ValleyBikeSim {
 		while (kioskNum == -1) {
 			System.out.println("Number of kiosks: ");
 			input = c.nextLine();
-			if (address.equals("back")) {
+			if (input.equalsIgnoreCase("back") || input.equalsIgnoreCase("b")) {
 				System.out.println();
+				extracted();
 				return;
 			}
 			try {
@@ -491,6 +500,7 @@ public class ValleyBikeSim {
 			}
 			if (!station2_exists || !station1_exists) {
 				System.out.print("Please make sure station ids are valid.");
+				extracted();
 				return;
 			}
 
@@ -501,12 +511,14 @@ public class ValleyBikeSim {
 				time_2 = f.parse(arr[4]);
 			} catch (ParseException e) {
 				System.out.print("Please make sure time format follows yyyy-[m]m-[d]d hh:mm:ss.\n");
+				extracted();
 				return;
 			}
 			avg_min = (time_2.getTime() - time_1.getTime()) / (60 * 1000) % 60 + avg_min;
 		}
 		if (time_1.getTime() >= time_2.getTime()) {
 			System.out.println("Please make sure all rides are possible.\n");
+			extracted();
 			return;
 		}
 		avg_min = avg_min / rides; // Calculate average ride time
@@ -520,8 +532,14 @@ public class ValleyBikeSim {
 		List<String[]> data = new ArrayList<String[]>(); // Holds rides listed in file
 		while(true) {
 		// Prompt user for file with ride information
-		System.out.print("Enter the file name (including extension) of the file located in data-files: ");
+		System.out.println("Enter the file name (including extension) of the file located in data-files: ");
+		System.out.println("Type 'back' to return to menu.");
 		Scanner a = new Scanner(System.in);
+		String input = a.next();
+		if (input.equalsIgnoreCase("back") || input.equalsIgnoreCase("b")) {
+			extracted();
+			return;
+		}
 
 		// Read file and save data
 		try {
@@ -548,6 +566,9 @@ public class ValleyBikeSim {
 		summarizeRides(data); // call for summary of rides
 
 	}
+private static void extracted() {
+	return;
+}
 
 
 
@@ -743,8 +764,9 @@ public class ValleyBikeSim {
 		while (password == null) {
 			System.out.println("Create password: ");
 			password = c.nextLine();
-			if (password.equals("back")) {
+			if (password.equalsIgnoreCase("back") || password.equalsIgnoreCase("b")) {
 				System.out.println();
+				extracted();
 				return;
 			}
 		}
@@ -836,8 +858,9 @@ public class ValleyBikeSim {
 			System.out.println("[3]Monthly Membership: $20 monthly. The first 45 minutes of each ride are included.");
 			System.out.println("Type 'back' to return to menu.");
 			choice = s.next();
-			if (choice.equals("back")) {
+			if (choice.equalsIgnoreCase("back") || choice.equalsIgnoreCase("b")) {
 				System.out.println();
+				extracted();
 				return;
 			}
 			if (memOptions.contains(choice)) {
@@ -897,28 +920,45 @@ public class ValleyBikeSim {
 		Scanner c = new Scanner(System.in); // Create a Scanner object
 		String input;
 		boolean done = false;
+		int inputid;
 		while (true) {
 			System.out.println("Please enter a station number.");
 			System.out.println("Type 'back' to return to menu.");
 			input = c.next();
-			if (input.equals("back")) {
+			if (input.equalsIgnoreCase("back") || input.equalsIgnoreCase("b")) {
 				System.out.println();
+				extracted();
 				return;
 			}
+			try { // check that input is a number
+				inputid = Integer.parseInt(input);
+			} catch (Exception e) {
+				System.out.println(
+						"\nNo such station exists.");
+				continue;
+			}
+			boolean matchid = false;
 			for (Station s : all_stations) {
 				int id = s.getID();
-				if (id == Integer.parseInt(input)) {
+				if (id == inputid) {
 					if (s.getMainReq() == 0) {
 						System.out.println("This station currently has no active maintenance requests.");
+						matchid = true;
 						break;
 					} else {
 						int oldMain = s.getMainReq();
 						s.setReq(oldMain - 1);
 						System.out.println("A worker has been sent to perform maintenance.");
 						done = true;
+						matchid = true;
 						break;
 					}
 				}
+			}
+			
+			if (matchid == false) {
+				System.out.println("\nNo such station exists.");
+				continue;
 			}
 			if (done == true) {
 				break;
@@ -956,7 +996,20 @@ public class ValleyBikeSim {
 
 		while (end) { // make sure the station exists
 			System.out.print("Please enter station ID at current location: ");
-			int id = Integer.parseInt(userInput.next());
+			System.out.println("Type 'back' to return to menu.");
+			String input = userInput.next();
+			int id = 0;
+			if (input.equalsIgnoreCase("back") || input.equalsIgnoreCase("b")) {
+				extracted();
+				return;
+			}
+			try { // check that input is a number
+				id = Integer.parseInt(input);
+			} catch (Exception e) {
+				System.out.println(
+						"No such station exists. \nPlease enter valid station ID.");
+				continue;
+			}
 			if (stationExists(id)) {
 				stationId = id;
 				end = false;
@@ -1019,14 +1072,26 @@ public class ValleyBikeSim {
 				}
 				break;
 			}
-			while(end){ //make sure the station exists
+			while (end) { // make sure the station exists
 				System.out.print("Please enter station ID at current location: ");
-				int id = Integer.parseInt(userInput.next());
-				if(stationExists(id)){
-					stationId = id;
-							end=false;
+				System.out.println("Type 'back' to return to menu.");
+				String input = userInput.next();
+				if (input.equalsIgnoreCase("back") || input.equalsIgnoreCase("b")) {
+					extracted();
+					return;
 				}
-				else{
+				int id = 0;
+				try { // check that input is a number
+					id = Integer.parseInt(input);
+				} catch (Exception e) {
+					System.out.println(
+							"No such station exists. \nPlease enter valid station ID.");
+					continue;
+				}
+				if (stationExists(id)) {
+					stationId = id;
+					end = false;
+				} else {
 					System.out.print("No such station exists. \nPlease enter valid station ID.");
 				}
 			}
