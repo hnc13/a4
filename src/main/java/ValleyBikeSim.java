@@ -1,4 +1,5 @@
 import java.sql.Timestamp;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
@@ -8,6 +9,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import java.text.*;
@@ -52,6 +54,10 @@ public class ValleyBikeSim {
 	static JLabel please;
 	static JTextField IDtext;
 	static JLabel userPass;
+	static JPanel homePanel;
+	static JButton enter;
+	static JLabel congrats;
+	
 			
 
 //-----------------------------------------------------------------------------------------------------------------
@@ -751,6 +757,8 @@ private static void extracted() {
 		}
 	}
 
+	
+	
 	/**
 	 * Allows a new user to create an account. Only users can create accounts, not
 	 * admins.
@@ -763,10 +771,14 @@ private static void extracted() {
 		int balance = 0;
 		Scanner c = new Scanner(System.in); // Create a Scanner object
 
+		
+		
 		Random rand = new Random();
 		Integer randomID = rand.nextInt(9999 - 1000) + 1000;
 		boolean repeat = false;
 
+		
+		
 		while (ID == 0) {
 			repeat = false;
 			for (Account a : all_accounts) {
@@ -784,15 +796,11 @@ private static void extracted() {
 		System.out.println("Please fill out the information requested below.");
 		System.out.println("Type 'back' to return to main menu.");
 		
-		userPass = new JLabel("Please enter your username and password");
-		userPass.setBounds(260, 40, 250, 20);
-		
-		frame.add(userPass);
 
 		// input password
 		while (password == null) {
 			System.out.println("Create password: ");
-			password = c.nextLine();
+			password = IDtext.getText(); //c.nextLine();
 			if (password.equalsIgnoreCase("back") || password.equalsIgnoreCase("b")) {
 				System.out.println();
 				extracted();
@@ -807,6 +815,34 @@ private static void extracted() {
 		saveAccountList();
 
 		System.out.println("Congrats! Your account has been created. Your user ID is " + ID + ".");
+		
+		congrats = new JLabel("Congrats! Your account has been created. Your user ID is " + ID + ".");
+        congrats.setBounds(80, 150, 500, 20);
+		
+        home = new JButton("Home Menu");
+        home.setBounds(200, 180,150, 40);
+        
+        home.addActionListener(new ActionListener(){  
+			public void actionPerformed(ActionEvent e){  
+				createAccount();
+	          
+	        }  
+	    });
+        
+		// updating the GUI
+		frame.remove(IDtext);
+		frame.remove(userPass);
+		frame.remove(enter);
+		frame.add(congrats);
+		frame.add(home);
+		
+		frame.repaint();
+		
+		
+		
+		
+		
+		
 	}
 
 	/**
@@ -821,25 +857,7 @@ private static void extracted() {
 		boolean trueID = false;
 		boolean rightPass = false;
 		
-		//get rid of elements from home page
-		frame.remove(logIn);
-		frame.remove(createAccount);
-		frame.remove(welcomeText);
-		frame.remove(please);
 		
-		//draw elements of logIn page
-		userPass = new JLabel("Please enter your username and password");
-		userPass.setBounds(240, 40, 250, 20);
-		
-		IDtext = new JTextField();
-		IDtext.setBounds(100,200, 150,20);
-		
-		//add to frame
-		frame.add(userPass);
-		frame.add(IDtext);
-		
-		//frame.setLayout(null);
-		frame.setVisible(true);
 
 		System.out.println("Please enter your user ID: ");
 		while (true) {
@@ -875,6 +893,26 @@ private static void extracted() {
 			}
 			System.out.println("That password is incorrect. Please try again.");
 		}
+		
+		//get rid of elements from home page
+				frame.remove(logIn);
+				frame.remove(createAccount);
+				frame.remove(welcomeText);
+				frame.remove(please);
+				
+				//draw elements of logIn page
+				userPass = new JLabel("Please enter your username and password");
+				userPass.setBounds(240, 40, 250, 20);
+				
+				IDtext = new JTextField();
+				IDtext.setBounds(100,200, 150,20);
+				
+				//add to frame
+				frame.add(userPass);
+				frame.add(IDtext);
+				
+				//frame.setLayout(null);
+				//frame.setVisible(true);
 
 	}
 
@@ -1223,38 +1261,40 @@ private static void extracted() {
 		//creating instance of JFrame 
 		//frame = new JFrame(); 
 		
+		// setting up the panel
+		homePanel = new JPanel();
+		homePanel.setBounds(100,100,width-200,height-200);    
+	    homePanel.setBackground(Color.gray);
+		
 		// creating the welcome label
 		welcomeText = new JLabel("Welcome to the ValleyBike Simulator.");
-        welcomeText.setBounds(240, 40, 250, 20);
+        welcomeText.setBounds(110, 120, 250, 20);
         
         please = new JLabel("  Please log in or create an account.");
-        please.setBounds(240, 60, 250, 20);
+        please.setBounds(110, 150, 250, 20);
 		
 		
-		// creating the home, log in, and create account buttons
-		// not working with logoIMG, figure out later
+		// creating the buttons
 		home = new JButton(logoIMG);
 		home.setBounds(0,0,230,90);
 		
 		logIn=new JButton("Log In");
-		logIn.setBounds((width/2)-125,height/2,100, 40);//x axis, y axis, width, height  
+		logIn.setBounds(110,180,100, 40);//x axis, y axis, width, height  
 		          
 		createAccount=new JButton("Create Account"); 
-		createAccount.setBounds((width/2)+25,height/2,100, 40);//x axis, y axis, width, height 
+		createAccount.setBounds(230,180,100, 40);//x axis, y axis, width, height 
+		
+		enter = new JButton("Enter");
+		enter.setBounds(100,230, 100, 40);
 		
 		// adding elements to the GUI
-		frame.add(welcomeText);
-		frame.add(please);
-		frame.add(logIn);  
-		frame.add(createAccount);
+		homePanel.add(welcomeText);
+		homePanel.add(please);
+		homePanel.add(logIn);  
+		homePanel.add(createAccount);
 		frame.add(home);
-		
-//		//draw elements of logIn page
-//		userPass = new JLabel("Please enter your username and password");
-//		userPass.setBounds(240, 40, 250, 100);
-//		frame.add(userPass);
-		
-		
+		frame.add(homePanel);
+				
 		
 		//setting up action listeners for the buttons
 		logIn.addActionListener(new ActionListener(){  
@@ -1271,8 +1311,29 @@ private static void extracted() {
 		
 		createAccount.addActionListener(new ActionListener(){  
 			public void actionPerformed(ActionEvent e){  
-				frame.remove(welcomeText);
-	            createAccount();
+				// remove elements from home page
+				frame.remove(homePanel);
+								
+				//draw elements of logIn page
+				userPass = new JLabel("Please enter your desired password");
+				userPass.setBounds(100, 170, 250, 20);
+						
+				IDtext = new JTextField();
+				IDtext.setBounds(100,200, 150,20);
+				
+				//add to frame and repaint
+				frame.add(userPass);
+				frame.add(IDtext);
+				frame.add(enter);
+				
+				frame.repaint();
+	          
+	        }  
+	    });
+		
+		enter.addActionListener(new ActionListener(){  
+			public void actionPerformed(ActionEvent e){  
+				createAccount();
 	          
 	        }  
 	    });
@@ -1294,6 +1355,8 @@ private static void extracted() {
 		
 		//creating instance of JFrame 
 		frame = new JFrame();
+		
+		
 
 		// initializing all array lists
 		all_stations = new ArrayList<Station>();
@@ -1307,7 +1370,7 @@ private static void extracted() {
 		Scanner s = new Scanner(System.in); // Create a Scanner object
 		System.out.println("Welcome to the ValleyBike Simulator.");
 		System.out.println("Please log in or create an account.");
-		drawHomePage();
+		
 
 		//fill all_accounts
 		try {
@@ -1325,6 +1388,9 @@ private static void extracted() {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
+		// draws main page
+		drawHomePage();
 
 		String[] num01 = new String[] { "0", "1" }; // log in options
 		List<String> logInOptions = Arrays.asList(num01);
