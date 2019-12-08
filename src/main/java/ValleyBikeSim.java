@@ -2,6 +2,8 @@ import java.sql.Timestamp;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.*;
 import java.util.*;
 
@@ -9,7 +11,9 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
 
 import java.text.*;
@@ -55,9 +59,14 @@ public class ValleyBikeSim {
 	static JTextField IDtext;
 	static JLabel userPass;
 	static JPanel homePanel;
-	static JButton enter;
+	static JButton enterCreate;
 	static JLabel congrats;
-	
+	static JTextField passText;
+	static JLabel userID;
+	static JButton enterLogin;
+	static JButton logout;
+	static JLabel menuType;
+	static JPanel menuPanel;
 			
 
 //-----------------------------------------------------------------------------------------------------------------
@@ -816,8 +825,11 @@ private static void extracted() {
 
 		System.out.println("Congrats! Your account has been created. Your user ID is " + ID + ".");
 		
+		// Tell user account creation was successful
 		congrats = new JLabel("Congrats! Your account has been created. Your user ID is " + ID + ".");
         congrats.setBounds(80, 150, 500, 20);
+        
+        //activate log out button
 		
         home = new JButton("Home Menu");
         home.setBounds(200, 180,150, 40);
@@ -832,15 +844,11 @@ private static void extracted() {
 		// updating the GUI
 		frame.remove(IDtext);
 		frame.remove(userPass);
-		frame.remove(enter);
+		frame.remove(enterCreate);
 		frame.add(congrats);
 		frame.add(home);
 		
-		frame.repaint();
-		
-		
-		
-		
+		frame.repaint();	
 		
 		
 	}
@@ -857,11 +865,11 @@ private static void extracted() {
 		boolean trueID = false;
 		boolean rightPass = false;
 		
+		// receives and checks the username
 		
-
-		System.out.println("Please enter your user ID: ");
+		//System.out.println("Please enter your user ID: ");
 		while (true) {
-			input = s.next();
+			input =  IDtext.getText(); //s.next(); //
 			for (Account a : all_accounts) {
 				if (Integer.toString(a.getID()).equals(input)) {
 					ID = a.getID();
@@ -875,10 +883,15 @@ private static void extracted() {
 			System.out.println("That user ID is incorrect. Please try again.");
 		}
 
-		System.out.println("Please enter your password: ");
-		Scanner c = new Scanner(System.in);
+		// receives and checks the password 
+		
+		//System.out.println("Please enter your password: ");
+		//Scanner c = new Scanner(System.in);
+		
+		// while loop is messing it up
+		// need to figure out how to handle incorrect input
 		while (true) {
-			input = c.next();
+			input =  passText.getText(); //c.next(); //
 			for (Account a : all_accounts) {
 				if (ID.equals(a.getID())) {
 					if (input.equals(a.getPassword())) {
@@ -894,26 +907,172 @@ private static void extracted() {
 			System.out.println("That password is incorrect. Please try again.");
 		}
 		
-		//get rid of elements from home page
-				frame.remove(logIn);
-				frame.remove(createAccount);
-				frame.remove(welcomeText);
-				frame.remove(please);
-				
-				//draw elements of logIn page
-				userPass = new JLabel("Please enter your username and password");
-				userPass.setBounds(240, 40, 250, 20);
-				
-				IDtext = new JTextField();
-				IDtext.setBounds(100,200, 150,20);
-				
-				//add to frame
-				frame.add(userPass);
-				frame.add(IDtext);
-				
-				//frame.setLayout(null);
-				//frame.setVisible(true);
-
+		System.out.println("Current User: " + currentUser.getID());
+		
+		// Setting up page for successful log in
+		welcomeText.setText("Login successful! Welcome to ValleyBike user: " +currentUser.getID());
+		welcomeText.setBounds(100,100,300,20);
+		
+		// Setting up the User and Admin menu options
+		menuType = new JLabel();
+		menuType.setBounds(50,180,100,20);
+		
+		menuPanel = new JPanel();
+		menuPanel.setBounds(50,170,300,300);
+		
+		if (currentUser.getType() == 0) {
+			menuType.setText("Press Mouse for User Menu:");
+			
+			//"[1] View station list.",
+			//"[2] Purchase/Change Membership.", "[3] Cancel Membership.", "[4] Start ride.", 
+			//"[5] End ride."
+			
+			final JLabel itemSelected = new JLabel();          
+	        itemSelected.setHorizontalAlignment(JLabel.CENTER);  
+	        itemSelected.setSize(400,100);  
+	        
+	        // creating a popupmenu
+	        final JPopupMenu popupmenu = new JPopupMenu("User");   
+	        JMenuItem viewStations = new JMenuItem("View Station List");  
+	        JMenuItem membership = new JMenuItem("Purchase/Change Membership");  
+	        JMenuItem cancelMem = new JMenuItem("Cancel Membership");  
+	        JMenuItem startRd = new JMenuItem("Start Ride");
+	        JMenuItem endRd = new JMenuItem("End Ride");
+	        //adding items to the menu
+	        popupmenu.add(viewStations); popupmenu.add(membership); popupmenu.add(cancelMem); 
+	        popupmenu.add(startRd); popupmenu.add(endRd);
+	        
+	        // creating event listeners for menu items
+	        menuPanel.addMouseListener(new MouseAdapter() {  
+	            public void mouseClicked(MouseEvent e) {              
+	                popupmenu.show(menuPanel , e.getX(), e.getY());  
+	            }                 
+	         });  
+	        viewStations.addActionListener(new ActionListener(){  
+	         public void actionPerformed(ActionEvent e) {              
+	             itemSelected.setText("Station List MenuItem clicked.");  
+	             viewStationList();
+	         }  
+	        });  
+	        membership.addActionListener(new ActionListener(){  
+	            public void actionPerformed(ActionEvent e) {              
+	                itemSelected.setText("Purchase/Change Membership MenuItem clicked.");  
+	                buyMem();
+	            }  
+	           });  
+	        cancelMem.addActionListener(new ActionListener(){  
+	            public void actionPerformed(ActionEvent e) {              
+	                itemSelected.setText("Cancel Membership MenuItem clicked."); 
+	                cancelMem();
+	            }  
+	           }); 
+	        startRd.addActionListener(new ActionListener(){  
+	            public void actionPerformed(ActionEvent e) {              
+	                itemSelected.setText("Start Ride MenuItem clicked."); 
+	                rentBike();
+	            }  
+	           });
+	        endRd.addActionListener(new ActionListener(){  
+	            public void actionPerformed(ActionEvent e) {              
+	                itemSelected.setText("End Ride MenuItem clicked.");  
+	                returnBike();
+	            }  
+	           });
+			
+			
+			// add elements to panel
+			menuPanel.add(menuType);
+			menuPanel.add(popupmenu);
+			
+		} else if (currentUser.getType() == 1) {
+			menuType.setText("Press Mouse for Admin Menu:");
+			
+			final JLabel itemSelected = new JLabel();          
+	        itemSelected.setHorizontalAlignment(JLabel.CENTER);  
+	        itemSelected.setSize(400,100);  
+	        
+	     //   "[1] View station list.", "[2] Add station.",
+			//"[3] Save station list.", "[4] Equalize stations.", "[5] Resolve ride data.",
+		//	"[6] View total ride history.", "[7] Resolve maintenance issue."
+	        
+	        // creating a popupmenu
+	        final JPopupMenu popupmenu = new JPopupMenu("User");   
+	        JMenuItem viewStations = new JMenuItem("View Station List");  
+	        JMenuItem addStation = new JMenuItem("Add Station");  
+	        JMenuItem saveStations = new JMenuItem("Save Station List");  
+	        JMenuItem equalStations = new JMenuItem("Equalize Stations");
+	        JMenuItem resolveRides = new JMenuItem("Resolve Ride Data");
+	        //adding items to the menu
+	        popupmenu.add(viewStations); popupmenu.add(addStation); popupmenu.add(saveStations); 
+	        popupmenu.add(equalStations); popupmenu.add(resolveRides);
+	        
+	        // creating event listeners for menu items
+	        menuPanel.addMouseListener(new MouseAdapter() {  
+	            public void mouseClicked(MouseEvent e) {              
+	                popupmenu.show(menuPanel , e.getX(), e.getY());  
+	            }                 
+	         });  
+	        viewStations.addActionListener(new ActionListener(){  
+	         public void actionPerformed(ActionEvent e) {              
+	             itemSelected.setText("Station List MenuItem clicked.");  
+	             viewStationList();
+	         }  
+	        });  
+	        addStation.addActionListener(new ActionListener(){  
+	            public void actionPerformed(ActionEvent e) {              
+	                itemSelected.setText("Add Station Membership MenuItem clicked.");  
+	                userAddStation();
+	            }  
+	           });  
+	        saveStations.addActionListener(new ActionListener(){  
+	            public void actionPerformed(ActionEvent e) {              
+	                itemSelected.setText("Save Station List MenuItem clicked."); 
+	                saveStationList();
+	            }  
+	           }); 
+	        equalStations.addActionListener(new ActionListener(){  
+	            public void actionPerformed(ActionEvent e) {              
+	                itemSelected.setText("Equalize Stations MenuItem clicked."); 
+	                equalizeStations();
+	            }  
+	           });
+	        resolveRides.addActionListener(new ActionListener(){  
+	            public void actionPerformed(ActionEvent e) {              
+	                itemSelected.setText("Resolve Ride Data MenuItem clicked.");  
+	                try {
+						resolveRideData();
+					} catch (ParseException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+	            }  
+	           });
+			
+			
+			// add elements to panel
+			menuPanel.add(menuType);
+			menuPanel.add(popupmenu);
+			
+			// add elements to panel
+			menuPanel.add(menuType);
+			
+		}
+		
+		// update frame and repaint
+		frame.remove(userID);
+		frame.remove(IDtext);
+		frame.remove(userPass);
+		frame.remove(passText);
+		frame.remove(enterLogin);
+		
+		frame.add(welcomeText);
+		frame.add(menuPanel);
+		frame.add(logout);
+		
+		
+		
+		frame.repaint();
+		
 	}
 
 	/**
@@ -1261,6 +1420,8 @@ private static void extracted() {
 		//creating instance of JFrame 
 		//frame = new JFrame(); 
 		
+		
+		
 		// setting up the panel
 		homePanel = new JPanel();
 		homePanel.setBounds(100,100,width-200,height-200);    
@@ -1284,8 +1445,14 @@ private static void extracted() {
 		createAccount=new JButton("Create Account"); 
 		createAccount.setBounds(230,180,100, 40);//x axis, y axis, width, height 
 		
-		enter = new JButton("Enter");
-		enter.setBounds(100,230, 100, 40);
+		enterCreate = new JButton("Enter");
+		enterCreate.setBounds(100,230, 100, 40);
+		
+		enterLogin = new JButton("Login");
+		enterLogin.setBounds(100,280, 100, 40);
+		
+		logout = new JButton("Log Out");
+		logout.setBounds(width-120, 20, 100, 40);
 		
 		// adding elements to the GUI
 		homePanel.add(welcomeText);
@@ -1299,13 +1466,34 @@ private static void extracted() {
 		//setting up action listeners for the buttons
 		logIn.addActionListener(new ActionListener(){  
 			public void actionPerformed(ActionEvent e){
+				// remove elements from home page
+				frame.remove(homePanel);
 				
-	            try {
-					logIn();
-				} catch (ParseException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}  
+								
+				//draw elements of logIn page
+				userID = new JLabel("Please enter your ID");
+				userID.setBounds(100, 170, 250, 20);
+						
+				IDtext = new JTextField("ID");
+				IDtext.setBounds(100,200, 150,20);
+				
+				userPass = new JLabel("Please enter your password");
+				userPass.setBounds(100, 230, 250, 20);
+				
+				passText = new JTextField("Password");
+				passText.setBounds(100,260, 150,20);
+				
+				//add to frame and repaint
+				frame.add(userID);
+				frame.add(IDtext);
+				frame.add(userPass);
+				frame.add(passText);
+				frame.add(enterLogin);
+				
+				frame.repaint();
+				
+				
+	            
 	        }  
 	    }); 
 		
@@ -1314,26 +1502,55 @@ private static void extracted() {
 				// remove elements from home page
 				frame.remove(homePanel);
 								
-				//draw elements of logIn page
+				//draw elements of createAccount page
 				userPass = new JLabel("Please enter your desired password");
 				userPass.setBounds(100, 170, 250, 20);
 						
-				IDtext = new JTextField();
+				IDtext = new JTextField("Password");
 				IDtext.setBounds(100,200, 150,20);
 				
 				//add to frame and repaint
 				frame.add(userPass);
 				frame.add(IDtext);
-				frame.add(enter);
+				frame.add(enterCreate);
 				
 				frame.repaint();
 	          
 	        }  
 	    });
 		
-		enter.addActionListener(new ActionListener(){  
+		enterCreate.addActionListener(new ActionListener(){  
 			public void actionPerformed(ActionEvent e){  
 				createAccount();
+	          
+	        }  
+	    });
+		
+		enterLogin.addActionListener(new ActionListener(){  
+			public void actionPerformed(ActionEvent e){  
+				  try {
+						logIn();
+					} catch (ParseException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				
+	          
+	        }  
+	    });
+		
+		logout.addActionListener(new ActionListener(){  
+			public void actionPerformed(ActionEvent e){
+				// make sure user is not logged in 
+				currentUser = null;
+				
+				// set window back to home page
+				frame.remove(menuPanel);
+				frame.remove(welcomeText);
+				frame.remove(logout);
+				frame.repaint();
+				
+				drawHomePage();
 	          
 	        }  
 	    });
@@ -1344,8 +1561,7 @@ private static void extracted() {
 		frame.setSize(width, height); 
 		frame.setLayout(null);
 		frame.setVisible(true);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);    
-    
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
 		
 	}
 
@@ -1389,6 +1605,41 @@ private static void extracted() {
 			e.printStackTrace();
 		}
 		
+		//fill all_stations
+				try {
+					BufferedReader csvReader = new BufferedReader(new FileReader(path));
+					String row;
+					int count = 0;
+					while ((row = csvReader.readLine()) != null) {
+						if (count != 0) {
+							addStation(row); // Add station to all_stations
+						}
+						count++;
+					}
+					csvReader.close();
+
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				
+				//Fill ride_history
+				try {
+					BufferedReader csvReader = new BufferedReader(new FileReader("data-files/ride-history.csv"));
+					String row;
+					int count = 0;
+					while ((row = csvReader.readLine()) != null) {
+						if (count != 0) {
+							addRideHistory(row); // Add ride_history obj to ride_history
+						}
+						count++;
+					}
+					csvReader.close();
+
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+						
+		
 		// draws main page
 		drawHomePage();
 
@@ -1411,39 +1662,6 @@ private static void extracted() {
 			createAccount();
 		}
 
-		//fill all_stations
-		try {
-			BufferedReader csvReader = new BufferedReader(new FileReader(path));
-			String row;
-			int count = 0;
-			while ((row = csvReader.readLine()) != null) {
-				if (count != 0) {
-					addStation(row); // Add station to all_stations
-				}
-				count++;
-			}
-			csvReader.close();
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		//Fill ride_history
-		try {
-			BufferedReader csvReader = new BufferedReader(new FileReader("data-files/ride-history.csv"));
-			String row;
-			int count = 0;
-			while ((row = csvReader.readLine()) != null) {
-				if (count != 0) {
-					addRideHistory(row); // Add ride_history obj to ride_history
-				}
-				count++;
-			}
-			csvReader.close();
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 		
 		
 
@@ -1529,7 +1747,7 @@ private static void extracted() {
 				} else if (input.equals("4")) { // equalize stations
 					equalizeStations();
 				} else if (input.equals("5")) { // resolve ride data
-						resolveRideData();
+					resolveRideData();
 				} else if (input.equals("6")) { // view total ride history
 					viewRideHistory();
 				} else if (input.equals("7")) { // resolve maintenance issue
