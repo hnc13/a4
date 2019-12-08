@@ -29,24 +29,40 @@ import java.time.format.DateTimeFormatter;
 
 public class ValleyBikeSim {
 
-//-----------------------------------------------------------------------------------------------------------------
-	// ** INITIALIZE DATA STRUCTURES & VARIABLES
+//-----------------------------------------------------------------------------------------------------------------//
+	//***** Static Data Structures ****//
+	
+	/**
+	 * List containing Station objects
+	 */
+	private static List<Station> all_stations; 
+	/**
+	 * List containing Ride objects.
+	 */
+	private static List<Ride> all_rides;          
+	/**
+	 * List containing Account objects
+	 */
+	private static List<Account> all_accounts;    
+	/**
+	 * List containing Ride History objects 
+	 */
+	private static List<RideHistory> ride_history; 
 
-	private static List<Station> all_stations;     // List that contains Station objects
-	private static List<Ride> all_rides;           // List that contains Ride objects
-	private static List<Account> all_accounts;     // List that contains Account objects
-	private static List<RideHistory> ride_history; //List that contains ride history data for all users
-
-	// Path of csv file
+	//***** Static Variables ****//
+	/** Path of station-data.csv file
+	 */
 	private static String path = "data-files/station-data.csv";
 
-	// Current user
+	/** Current user
+	 */
 	private static Account currentUser;
-
-	// To specify if welcome message has already been printed
+	
+	/** Has welcome message has already been printed?
+	 */
 	private static boolean welcome = false;
 	
-	// GUI Related
+	//***** Static GUI Related Variables ****//
 	static JFrame frame;
 	static int width = 600;
 	static int height = 500;
@@ -69,10 +85,11 @@ public class ValleyBikeSim {
 	static JPanel menuPanel;
 			
 
-//-----------------------------------------------------------------------------------------------------------------
-	// ** PRINT METHODS **
+//-----------------------------------------------------------------------------------------------------------------//
+	//***** Print Methods ****//
 
-	// Prints out station list in the console.
+	/** Print list of existing stations in the console.
+	 */
 	public static void viewStationList() {
 		all_stations.sort(Comparator.comparing(Station::getID)); // Sort on the ID
 		System.out.printf("%s	%s	%s	%s	%s	%s	%s	%s	%n", "ID", "Bikes", "Pedelec", "AvDocs", "MainReq", "Cap",
@@ -89,7 +106,8 @@ public class ValleyBikeSim {
 			System.out.println();
 		}
 	}
-	// View All Ride History
+	/** Print ride history data of all users in the console.
+	 */
 	public static void viewRideHistory() {
 		System.out.printf("%s %s %s	%s	%s	%s %n", "User ID", "Bike ID", "Start Station", "End Station", "Start time", "End Time");
 		
@@ -103,8 +121,8 @@ public class ValleyBikeSim {
 			System.out.println();
 		}
 	}
-
-	// Prints out ride list in the console
+	/** Print ride data from 'all-rides' data structure that is populated by either sample-ride-data-0820/0821.csv in the console.
+	 */
 	public static void listAllRides() {
 		for (Ride r : all_rides) {
 			System.out.print("User: " + r.getUser() + "     ");
@@ -115,8 +133,8 @@ public class ValleyBikeSim {
 		}
 		System.out.println();
 	}
-	
-	// Print number of bikes and pedelecs in every station
+	/** Print number of bikes and pedelecs in every station.
+	 */
 	public static void viewBikeStats() {
 		all_stations.sort(Comparator.comparing(Station::getID)); // Sort on the ID //sort stations by ID for proper
 																	// order
@@ -132,10 +150,13 @@ public class ValleyBikeSim {
 		System.out.println();
 		System.out.println();
 	}
-//-----------------------------------------------------------------------------------------------------------------	
-	// ** HELPER METHODS **
+//-----------------------------------------------------------------------------------------------------------------//	
+	//***** Helper Methods ****//
 
-	// Turn Station object into a string
+	/** Convert Station object to string
+	 * @param obj - Station Object
+	 * @return a string containing all object attributes of a station
+	 */
 	public static String objectToString(Station obj) {
 		int kiosk_int = 0;
 		if (obj.getKiosk()) {
@@ -146,7 +167,10 @@ public class ValleyBikeSim {
 				+ obj.getAddress();
 		return temp;
 	}
-	//Turn ride_history object to string
+	/** Convert Ride History object to string
+	 * @param obj - Ride History Object
+	 * @return a string containing all object attributes of a ride 
+	 */
 	public static String rideHistoryToString(RideHistory obj) {
 		
 		String temp = obj.getUserID() + "," + obj.getBikeID() + "," + obj.getStartStation() + "," + obj.getDestStation() + ","
@@ -154,13 +178,19 @@ public class ValleyBikeSim {
 		return temp;
 	}
 
-	// Turn Account object into a string
+	/** Convert Account object to string
+	 * @param obj - Account Object
+	 * @return a string containing all object attributes of an user account
+	 */
 	public static String accountToString(Account obj) {
 		String temp = obj.getType() + "," + obj.getID() + "," + obj.getPassword() + "," + obj.getMembership() + ","
 				+ obj.getBalance();
 		return temp;
 	}
-	//Check if station exits in station data
+	/** Does station with passed station ID already exist?
+	 * @param id - ID of a station
+	 * @return true if such a station exists or false if no such station exists 
+	 */
 	public static boolean stationExists(int id) {
 		for (Station s : all_stations) {
 			if (s.getID() == id) {
@@ -169,7 +199,10 @@ public class ValleyBikeSim {
 		}
 		return false;
 	}
-	// Check if userAccount exists in ValleyBike System
+	/** Does user with a given userID already exist within the ValleyBike System?
+	 * @param userID - user ID
+	 * @return true if such a user account exists or false if no such user account exists 
+	 */
 	public static boolean userExists(int userID) {
 		for (Account a : all_accounts) {
 			if (a.getID() == userID) {
@@ -178,8 +211,9 @@ public class ValleyBikeSim {
 		}
 		return false;
 	}
-	
-	// Calculate total number of bikes in all stations
+	/** Calculate total number of bikes in all stations.
+	 * @return total number of bikes in the ValleBike System
+	 */
 	public static int totalBikes() {
 		int total = 0;
 		Iterator<Station> iterator = all_stations.listIterator();
@@ -189,7 +223,9 @@ public class ValleyBikeSim {
 		return total;
 	}
 
-	// Calculate total number of pedelecs in all stations
+	/** Calculate total number of pedelecs in all stations.
+	 * @return total number of pedelecs in the ValleBike System
+	 */
 	public static int totalPedelecs() {
 		int total = 0;
 		Iterator<Station> iterator = all_stations.listIterator();
@@ -199,6 +235,9 @@ public class ValleyBikeSim {
 		return total;
 	}
 
+	/** Calculate total capacity of all stations.
+	 * @return total capacity of stations in the ValleBike System
+	 */
 	// Calculate total capacity for all stations
 	public static int totalCapacity() {
 		int total = 0;
@@ -211,7 +250,7 @@ public class ValleyBikeSim {
 	
 
 //-----------------------------------------------------------------------------------------------------------------	
-	// ** SAVE FUNCTIONALITY **
+	//***** Save Data ****//
 
 	// Write current station list to a file. Updates current csv file that was read
 	public static void saveStationList() {
