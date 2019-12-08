@@ -1,15 +1,25 @@
 import java.sql.Timestamp;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.*;
 import java.util.*;
+
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
+
 import java.text.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-//This file creates a simulator for Valley Bikes. The user can interact with the program to
+//This program is based on code base 656 by Emma Tanur and Grace Bratzel. It creates 
+//creates a simulator for ValleyBikes. The user can interact with the program to
 //view the list of all stations, save the station list to a csv files, record a ride, read in ride data 
-//from a file and summarize it, and distribute bikes and pedelecs between stations.
+//from a file and summarize it, and distribute pedelecs between stationsm and more outlined in the ReadMe file.
 
-//Authors: Emma Tanur and Grace Bratzel
+//Authors: Hannah, Jess, Mae, Nashshaba 
 
 public class ValleyBikeSim {
 
@@ -29,6 +39,20 @@ public class ValleyBikeSim {
 
 	// To specify if welcome message has already been printed
 	private static boolean welcome = false;
+	
+	// GUI Related
+	static JFrame frame;
+	static int width = 600;
+	static int height = 500;
+	static ImageIcon logoIMG = new ImageIcon("data-files/ValleyBike.PNG");
+	static JButton home;
+	static JButton logIn;
+	static JButton createAccount;
+	static JLabel welcomeText;
+	static JLabel please;
+	static JTextField IDtext;
+	static JLabel userPass;
+			
 
 //-----------------------------------------------------------------------------------------------------------------
 	// ** PRINT METHODS **
@@ -759,6 +783,11 @@ private static void extracted() {
 		System.out.println();
 		System.out.println("Please fill out the information requested below.");
 		System.out.println("Type 'back' to return to main menu.");
+		
+		userPass = new JLabel("Please enter your username and password");
+		userPass.setBounds(260, 40, 250, 20);
+		
+		frame.add(userPass);
 
 		// input password
 		while (password == null) {
@@ -791,6 +820,26 @@ private static void extracted() {
 		Integer ID = 0;
 		boolean trueID = false;
 		boolean rightPass = false;
+		
+		//get rid of elements from home page
+		frame.remove(logIn);
+		frame.remove(createAccount);
+		frame.remove(welcomeText);
+		frame.remove(please);
+		
+		//draw elements of logIn page
+		userPass = new JLabel("Please enter your username and password");
+		userPass.setBounds(240, 40, 250, 20);
+		
+		IDtext = new JTextField();
+		IDtext.setBounds(100,200, 150,20);
+		
+		//add to frame
+		frame.add(userPass);
+		frame.add(IDtext);
+		
+		//frame.setLayout(null);
+		frame.setVisible(true);
 
 		System.out.println("Please enter your user ID: ");
 		while (true) {
@@ -1165,20 +1214,100 @@ private static void extracted() {
 				}
 			}
 		}
+		
+	/**
+	 * This method draws the start page for the ValleyBike Simulator
+	 * It was built with help from: https://www.javatpoint.com/java-swing	
+	 */
+	public static void drawHomePage() {
+		//creating instance of JFrame 
+		//frame = new JFrame(); 
+		
+		// creating the welcome label
+		welcomeText = new JLabel("Welcome to the ValleyBike Simulator.");
+        welcomeText.setBounds(240, 40, 250, 20);
+        
+        please = new JLabel("  Please log in or create an account.");
+        please.setBounds(240, 60, 250, 20);
+		
+		
+		// creating the home, log in, and create account buttons
+		// not working with logoIMG, figure out later
+		home = new JButton(logoIMG);
+		home.setBounds(0,0,230,90);
+		
+		logIn=new JButton("Log In");
+		logIn.setBounds((width/2)-125,height/2,100, 40);//x axis, y axis, width, height  
+		          
+		createAccount=new JButton("Create Account"); 
+		createAccount.setBounds((width/2)+25,height/2,100, 40);//x axis, y axis, width, height 
+		
+		// adding elements to the GUI
+		frame.add(welcomeText);
+		frame.add(please);
+		frame.add(logIn);  
+		frame.add(createAccount);
+		frame.add(home);
+		
+//		//draw elements of logIn page
+//		userPass = new JLabel("Please enter your username and password");
+//		userPass.setBounds(240, 40, 250, 100);
+//		frame.add(userPass);
+		
+		
+		
+		//setting up action listeners for the buttons
+		logIn.addActionListener(new ActionListener(){  
+			public void actionPerformed(ActionEvent e){
+				
+	            try {
+					logIn();
+				} catch (ParseException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}  
+	        }  
+	    }); 
+		
+		createAccount.addActionListener(new ActionListener(){  
+			public void actionPerformed(ActionEvent e){  
+				frame.remove(welcomeText);
+	            createAccount();
+	          
+	        }  
+	    });
+		
+		//next is setting up a action listener for home that returns us to the main page
+		
+		//setting the size, layout, and visibility of the frame
+		frame.setSize(width, height); 
+		frame.setLayout(null);
+		frame.setVisible(true);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);    
+    
+		
+	}
 
 //-----------------------------------------------------------------------------------------------------------------	
 
 	public static void main(String[] args) throws ParseException {
+		
+		//creating instance of JFrame 
+		frame = new JFrame();
 
+		// initializing all array lists
 		all_stations = new ArrayList<Station>();
 		all_rides = new ArrayList<Ride>();
 		ride_history = new ArrayList<RideHistory>();
 		all_accounts = new ArrayList<Account>();
+		
+		 
 
 		// Allow user to log in or create an account
 		Scanner s = new Scanner(System.in); // Create a Scanner object
 		System.out.println("Welcome to the ValleyBike Simulator.");
 		System.out.println("Please log in or create an account.");
+		drawHomePage();
 
 		//fill all_accounts
 		try {
