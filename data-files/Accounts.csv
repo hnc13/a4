@@ -5,4 +5,5 @@ Type (0 for user and 1 for admin),ID,Password,Membership(0 for none/1 for Foundi
 1,1313,iluvcats13,0,0
 0,6663,celinedion1fan,0,0
 0,7178,12345678,0,0
-0,6520,password123,0,0
+0,6520,password123,3,20
+0,6405,happy123,0,0

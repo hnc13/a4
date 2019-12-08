@@ -110,6 +110,7 @@ public class LocateBikes {
 			bikeLocation = stations.get(i);		
 			System.out.println("Pedelec " + pedToFind +" is currently at station "
 					 + bikeLocation);
+			break;
 			}
 		}
 		

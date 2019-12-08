@@ -9,7 +9,7 @@ import java.time.format.DateTimeFormatter;
 //view the list of all stations, save the station list to a csv files, record a ride, read in ride data 
 //from a file and summarize it, and distribute bikes and pedelecs between stations.
 
-//Authors: Emma Tanur and Grace Bratzel
+//Based off of the A1 of Emma Tanur and Grace Bratzel
 
 public class ValleyBikeSim {
 
@@ -20,7 +20,7 @@ public class ValleyBikeSim {
 	private static List<Ride> all_rides;           // List that contains Ride objects
 	private static List<Account> all_accounts;     // List that contains Account objects
 	private static List<RideHistory> ride_history; //List that contains ride history data for all users
-
+	private static List<Bikes> all_bikes;     // List that contains pedelec bike objects
 	// Path of csv file
 	private static String path = "data-files/station-data.csv";
 
@@ -445,6 +445,24 @@ public class ValleyBikeSim {
 		Station myStation = new Station(id, name, bikes, peds, avDocs, mainReq, cap, kiosk, address);
 		all_stations.add(myStation);
 	}
+	
+ 	// Add a pedelec bike object to all_bikes
+	public static void addBike(String data) {
+		String[] temp = data.split(","); // turn data into an array
+		// Parse out the string
+		String pedID = temp[0];
+		int station = Integer.parseInt(temp[1]);
+		int inUse = Integer.parseInt(temp[2]);
+		int userID = Integer.parseInt(temp[3]);
+		boolean bikeStatus = false; 
+		if (Integer.parseInt(temp[2]) != 0) {
+			bikeStatus = true;
+		}
+		// Add a new bike to existing ones
+			Bikes pedelec = new Bikes(pedID, station, inUse, userID);
+			all_bikes.add(pedelec);
+	}
+	 
 
 
 	// Add an Account object to all_accounts
@@ -1075,6 +1093,7 @@ public class ValleyBikeSim {
 		all_rides = new ArrayList<Ride>();
 		ride_history = new ArrayList<RideHistory>();
 		all_accounts = new ArrayList<Account>();
+		all_bikes = new ArrayList<Bikes>();
 
 		// Allow user to log in or create an account
 		Scanner s = new Scanner(System.in); // Create a Scanner object
@@ -1191,10 +1210,10 @@ public class ValleyBikeSim {
 					rentBike();
 				} else if (input.equals("4")) { // end ride
 					// TODO: call end ride
-					System.out.println("okay");
+					System.out.println("I'm sorry, this option is currently under maintenence.");
 				} else if (input.equals("5")) { // view ride history
 					// TODO: call view ride history
-					System.out.println("okay");
+					System.out.println("I'm sorry, this option is currently unavailable.");
 				} else if (input.equals("6")) { // view balance
 					System.out.println("Your balance is $" + currentUser.getBalance() + ".");
 				}
@@ -1241,7 +1260,7 @@ public class ValleyBikeSim {
 					resolveRideData();
 				} else if (input.equals("6")) { // track bikes
 					// TODO: call track bikes
-					System.out.println("okay");
+					System.out.println("We are working on locating this bike.");
 				} else if (input.equals("7")) { // view total ride history
 					viewRideHistory();
 					
