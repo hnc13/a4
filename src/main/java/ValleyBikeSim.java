@@ -1645,9 +1645,9 @@ private static void extracted() {
 
 		String[] num01 = new String[] { "0", "1" }; // log in options
 		List<String> logInOptions = Arrays.asList(num01);
-		String choice;
+		String choice = "";
 
-		while (true) {
+		while (currentUser == null) {
 			System.out.println("[0] Log in.");
 			System.out.println("[1] Create account.");
 			choice = s.next();
