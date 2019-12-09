@@ -5,13 +5,14 @@ public class LocateBikes {
 	private static String pedToFind;
 	private static int bikeLocation;
 	private static Scanner l;
+	private static HashMap<String, Integer> stations;
 	public static void pedLocation(String[] args) {
 		
 		System.out.println("Please enter pedelec ID: "); /*Will correspond to
 		pedelec bike that the user checks out */
 		l = new Scanner(System.in);
 		pedToFind = l.next(); 
-		HashMap < String, Integer > stations = new HashMap<String, Integer>();
+		stations = new HashMap<String, Integer>();
 		
 	    stations.put("P101",21);
 		stations.put("P102",21);
@@ -115,6 +116,9 @@ public class LocateBikes {
 		}
 		
 		
+	}
+	public HashMap<String, Integer> returnBikeCollection(){
+		return stations;
 	}
 
 }
