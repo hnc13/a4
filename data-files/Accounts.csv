@@ -1,14 +1,3 @@
-<<<<<<< HEAD
-Type (0 for user and 1 for admin),ID,Password,Membership(0 for none/1 for Founding Member/2 for yearly membership/ 3 for monthly membership,Balance
-0,6230,password,2,180
-0,2294,blahblah,0,0
-1,5468,adminpass,0,0
-1,1313,iluvcats13,0,0
-0,6663,celinedion1fan,0,0
-0,7178,12345678,0,0
-0,6520,password123,3,20
-0,6405,happy123,0,0
-=======
 Type (0 for user and 1 for admin),ID,Password,Membership(0 for none/1 for Founding Member/2 for yearly membership/ 3 for monthly membership,Balance
 0,6230,password,1,470
 0,2294,blahblah,0,0
@@ -19,4 +8,3 @@ Type (0 for user and 1 for admin),ID,Password,Membership(0 for none/1 for Foundi
 0,6520,password123,0,0
 0,6762,stanpitty,0,0
 0,9911,apple,3,40
->>>>>>> branch 'master' of https://github.com/hnc13/a4.git

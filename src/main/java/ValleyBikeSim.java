@@ -1789,17 +1789,11 @@ public class ValleyBikeSim {
 				} else if (input.equals("4")) { // start ride
 					rentBike();
 
-				} else if (input.equals("4")) { // end ride
-					// TODO: call end ride
-					System.out.println("I'm sorry, this option is currently under maintenence.");
-				} else if (input.equals("5")) { // view ride history
-					// TODO: call view ride history
-					System.out.println("I'm sorry, this option is currently unavailable.");
+				}  else if (input.equals("5")) { // end ride
+					returnBike();
 				} else if (input.equals("6")) { // view balance
 					System.out.println("Your balance is $" + currentUser.getBalance() + ".");
 
-				} else if (input.equals("5")) { // end ride
-					returnBike();
 				}
 //				else if (input.equals("5")) { // view balance
 //					System.out.println("Your balance is $" + currentUser.getBalance() + ".");
