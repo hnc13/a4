@@ -16,14 +16,16 @@ public class RideHistory{
 	private int bikeID;
 	private String startTime;
 	private String endTime;
+	private int completedRide;
 	
-	public RideHistory(int userID, int bikeID, int from, int to, String start, String end){
+	public RideHistory(int userID, int bikeID, int from, int to, String start, String end,int completed ){
 		this.userID = userID;
 		this.bikeID = bikeID;
 		this.startStationID=from;
 		this.destStationID = to;
 		this.startTime =start;
 		this.endTime = end;
+		this.completedRide = completed;
 	}
 	
 	public int getBikeID() {
@@ -45,6 +47,10 @@ public class RideHistory{
 	public String getEndTime(){
 		return this.endTime;
 	}
+	
+	public int getCompletedRide(){
+		return this.completedRide;
+	}
 
 	
 	
@@ -65,6 +71,10 @@ public class RideHistory{
 	}
 	public void setEnd(String endTime){
 		this.endTime = endTime;
+	}
+	
+	public void setCompletedRide(int completed){
+		this.completedRide = completed;
 	}
 	
 	
