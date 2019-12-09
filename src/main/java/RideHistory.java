@@ -13,12 +13,12 @@ public class RideHistory{
 	private int userID;
 	private int startStationID;
 	private int destStationID;
-	private int bikeID;
+	private String bikeID;
 	private String startTime;
 	private String endTime;
 	private int completedRide;
 	
-	public RideHistory(int userID, int bikeID, int from, int to, String start, String end,int completed ){
+	public RideHistory(int userID, String bikeID, int from, int to, String start, String end,int completed ){
 		this.userID = userID;
 		this.bikeID = bikeID;
 		this.startStationID=from;
@@ -28,7 +28,7 @@ public class RideHistory{
 		this.completedRide = completed;
 	}
 	
-	public int getBikeID() {
+	public String getBikeID() {
 		return this.bikeID;
 	}
 	
@@ -57,7 +57,7 @@ public class RideHistory{
 	public void setUserID(int userID){
 		this.userID = userID;
 	}
-	public void setBikeID(int bikeID){
+	public void setBikeID(String bikeID){
 		this.bikeID = bikeID;
 	}
 	public void setFrom(int startStationID){
