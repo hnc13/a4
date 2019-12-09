@@ -1794,10 +1794,10 @@ public class ValleyBikeSim {
 		home.setBounds(0, 0, 230, 90);
 
 		logIn = new JButton("Log In");
-		logIn.setBounds(110, 180, 100, 40);// x axis, y axis, width, height
+		logIn.setBounds(110, 200, 100, 40);// x axis, y axis, width, height
 
 		createAccount = new JButton("Create Account");
-		createAccount.setBounds(230, 180, 100, 40);// x axis, y axis, width, height
+		createAccount.setBounds(230, 200, 100, 40);// x axis, y axis, width, height
 
 		enterCreate = new JButton("Enter");
 		enterCreate.setBounds(100, 230, 100, 40);
