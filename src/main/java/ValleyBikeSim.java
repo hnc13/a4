@@ -7,6 +7,7 @@ import java.awt.event.MouseEvent;
 import java.io.*;
 import java.util.*;
 
+import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -14,6 +15,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
 import java.text.*;
@@ -65,9 +67,10 @@ public class ValleyBikeSim {
 	private static boolean welcome = false;
 
 	// ***** Static GUI Related Variables ****//
+	static boolean gui = false;
 	static JFrame frame;
 	static int width = 600;
-	static int height = 500;
+	static int height = 600;
 	static ImageIcon logoIMG = new ImageIcon("data-files/ValleyBike.PNG");
 	static JButton home;
 	static JButton logIn;
@@ -85,6 +88,7 @@ public class ValleyBikeSim {
 	static JButton logout;
 	static JLabel menuType;
 	static JPanel menuPanel;
+	static JLabel consoleLabel;
 
 //-----------------------------------------------------------------------------------------------------------------//
 	// ***** Print Methods ****//
@@ -107,6 +111,12 @@ public class ValleyBikeSim {
 			System.out.printf("%s	", s.getName() + " - " + s.getAddress());
 			System.out.println();
 		}
+		
+		JLabel stations = new JLabel("To view Station List, please see print out on Console");
+		stations.setBounds(100,300,500,20);
+		menuPanel.add(stations);
+		frame.repaint();
+		
 	}
 
 	/**
@@ -950,24 +960,43 @@ public class ValleyBikeSim {
 		Integer ID = 0;
 		boolean trueID = false;
 		boolean rightPass = false;
+		JLabel wrongID = new JLabel();
+		JLabel wrongPass = new JLabel();
 
+	
+		
 		// receives and checks the username
 
 		// System.out.println("Please enter your user ID: ");
-		while (true) {
+		// while loop causes issues when entering wrong log in information in the GUI
+	//	while (true) {
 			input = IDtext.getText(); // s.next(); //
 			for (Account a : all_accounts) {
+				// gets the ID and checks if it is equal to input
 				if (Integer.toString(a.getID()).equals(input)) {
 					ID = a.getID();
 					trueID = true;
+					frame.remove(wrongID);
+					frame.repaint();
 					break;
 				}
+
 			}
-			if (trueID == true) {
-				break;
+//			if (trueID == true) {
+//				break;
+//			} 
+			if(trueID == false) {
+				System.out.println("Wrong ID");
+				wrongID = new JLabel("ID was not found. Please double check your ID and try again.");
+				wrongID.setBounds(100, 230, 500, 20);
+				frame.add(wrongID);
+				frame.repaint();
+				return;
 			}
-			System.out.println("That user ID is incorrect. Please try again.");
-		}
+			
+			
+		//	System.out.println("That user ID is incorrect. Please try again.");
+		//}
 
 		// receives and checks the password
 
@@ -976,22 +1005,36 @@ public class ValleyBikeSim {
 
 		// while loop is messing it up
 		// need to figure out how to handle incorrect input
-		while (true) {
+	//while (true) {
 			input = passText.getText(); // c.next(); //
 			for (Account a : all_accounts) {
 				if (ID.equals(a.getID())) {
 					if (input.equals(a.getPassword())) {
 						rightPass = true;
 						currentUser = a;
+						
+						frame.remove(wrongPass);
+						frame.repaint();
 						break;
 					}
-				}
+				} 
+
 			}
-			if (rightPass == true) {
-				break;
+//			if (rightPass == true) {
+//				break;
+//			}
+			if(rightPass == false) {
+				System.out.println("wrong password");
+				wrongPass = new JLabel("Password was not found. Please double check your password and try again.");
+				wrongPass.setBounds(100, 310, 500, 20);
+				
+				frame.add(wrongPass);
+				frame.repaint();
+				return;
 			}
-			System.out.println("That password is incorrect. Please try again.");
-		}
+			
+	//		System.out.println("That password is incorrect. Please try again.");
+		//}
 
 		System.out.println("Current User: " + currentUser.getID());
 
@@ -1004,7 +1047,8 @@ public class ValleyBikeSim {
 		menuType.setBounds(50, 180, 100, 20);
 
 		menuPanel = new JPanel();
-		menuPanel.setBounds(50, 170, 300, 300);
+		menuPanel.setBounds(50, 120, 400, 300);
+		menuPanel.setBackground(Color.gray);
 
 		if (currentUser.getType() == 0) {
 			menuType.setText("Press Mouse for User Menu:");
@@ -1015,7 +1059,8 @@ public class ValleyBikeSim {
 			// "[5] End ride."
 
 			final JLabel itemSelected = new JLabel();
-			itemSelected.setHorizontalAlignment(JLabel.CENTER);
+			itemSelected.setBounds(75,120,200,20);
+			//itemSelected.setHorizontalAlignment(JLabel.CENTER);
 			itemSelected.setSize(400, 100);
 
 			// creating a popupmenu
@@ -1047,24 +1092,28 @@ public class ValleyBikeSim {
 			membership.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					itemSelected.setText("Purchase/Change Membership MenuItem clicked.");
+					inConsole();
 					buyMem();
 				}
 			});
 			cancelMem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					itemSelected.setText("Cancel Membership MenuItem clicked.");
+					inConsole();
 					cancelMem();
 				}
 			});
 			startRd.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					itemSelected.setText("Start Ride MenuItem clicked.");
+					inConsole();
 					rentBike();
 				}
 			});
 			endRd.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					itemSelected.setText("End Ride MenuItem clicked.");
+					inConsole();
 					returnBike();
 				}
 			});
@@ -1113,24 +1162,28 @@ public class ValleyBikeSim {
 			addStation.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					itemSelected.setText("Add Station Membership MenuItem clicked.");
+					inConsole();
 					userAddStation();
 				}
 			});
 			saveStations.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					itemSelected.setText("Save Station List MenuItem clicked.");
+					inConsole();
 					saveStationList();
 				}
 			});
 			equalStations.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					itemSelected.setText("Equalize Stations MenuItem clicked.");
+					inConsole();
 					equalizeStations();
 				}
 			});
 			resolveRides.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					itemSelected.setText("Resolve Ride Data MenuItem clicked.");
+					inConsole();
 					try {
 						resolveRideData();
 					} catch (ParseException e1) {
@@ -1155,6 +1208,8 @@ public class ValleyBikeSim {
 		frame.remove(userPass);
 		frame.remove(passText);
 		frame.remove(enterLogin);
+		//frame.remove(wrongID);
+		//frame.remove(wrongPass);
 
 		frame.add(welcomeText);
 		frame.add(menuPanel);
@@ -1217,12 +1272,91 @@ public class ValleyBikeSim {
 			}
 			System.out.println("That input is incorrect. Please try again.");
 		}
+		
+//		// creating labels
+//		JLabel founding = new JLabel("Founding Member: $90 annually. The first 60 minutes of each ride are included.");
+//		JLabel annual = new JLabel("Annual Membership: $80 annually. The first 45 minutes of each ride are included.");
+//		JLabel monthly = new JLabel("Monthly Membership: $20 monthly. The first 45 minutes of each ride are included.");
+//		JLabel currentMem = new JLabel("Your current membership is: "+ memsOptions.get(currentUser.getMembership() - 1) + ".");
+//		JLabel select = new JLabel("Please select an option below: ");
+//		
+//		founding.setBounds(100,150,500,20);
+//		annual.setBounds(100,180,500,20);
+//		monthly.setBounds(100,210,500,20);
+//		currentMem.setBounds(100,240,500,20);
+//		select.setBounds(100,270,500,20);
+//		
+//		// creating selection options for membership
+//		JRadioButton foundBtn =new JRadioButton("Founding Membership");    
+//		JRadioButton annualBtn =new JRadioButton("Annual Membership"); 
+//		JRadioButton monthlyBtn = new JRadioButton("Monthly Membership");
+//		foundBtn.setBounds(100,300,100,30);    
+//		annualBtn.setBounds(100,350,100,30);
+//		monthlyBtn.setBounds(100,400,100,30);
+//		
+//		// adding them to a group
+//		ButtonGroup bg=new ButtonGroup();    
+//		bg.add(foundBtn);
+//		bg.add(annualBtn); 
+//		bg.add(monthlyBtn);
+//		
+//		// creating buttons to enter selection or cancel
+//		JButton selection = new JButton("Select");
+//		JButton cancel = new JButton("Cancel");
+//		
+//		selection.setBounds(100, 450,100,40);
+//		cancel.setBounds(225,450,100,40);
+//		
+//		// action listener to set user's new membership choice
+//		selection.addActionListener(new ActionListener() {
+//			public void actionPerformed(ActionEvent e) {
+//				if(foundBtn.isSelected()) {
+//					currentUser.setMembership(0);
+//				} 
+//				if(annualBtn.isSelected()) {
+//					currentUser.setMembership(1);
+//				} 
+//				if(monthlyBtn.isSelected()) {
+//					currentUser.setMembership(2);
+//				} 
+//				frame.add(menuPanel);
+//				frame.repaint();
+//				
+//			}
+//		});
+//		
+//		// goes back to user's main page
+//		cancel.addActionListener(new ActionListener() {
+//			public void actionPerformed(ActionEvent e) {
+//				frame.add(menuPanel);
+//				frame.repaint();
+//				return;				
+//			}
+//		});
+//		
+//		
+//		// updating gui
+//		frame.remove(menuPanel);
+//		frame.add(founding);
+//		frame.add(annual);
+//		frame.add(monthly);
+//		frame.add(select);
+//		frame.add(currentMem);
+//		frame.add(foundBtn);
+//		frame.add(annualBtn);
+//		frame.add(monthlyBtn);
+//		frame.add(selection);
+//		frame.add(cancel);
+//		frame.repaint();
+		
+		
+		
 		for (Account a : all_accounts) {
 			if (a == currentUser) {
 				a.setMembership(mem);
 			}
 		}
-		int cost = Integer.parseInt(costOptions.get(Integer.parseInt(choice) - 1));
+		int cost = Integer.parseInt(costOptions.get(currentUser.getMembership()));   //Integer.parseInt(choice) - 1));
 		payment(cost);
 		saveAccountList();
 		System.out.println("Congratulations! You now have a ValleyBike " + memsOptions.get(Integer.parseInt(choice) - 1)
@@ -1529,14 +1663,30 @@ public class ValleyBikeSim {
 			}
 		}
 	}
+	
+	
+	/**
+	 * Helper function to display a request in GUI to 
+	 */
+	public static void inConsole() {
+		consoleLabel = new JLabel("Please enter the information requested in the console");
+		consoleLabel.setBounds(100,200,500,20);
+		
+		menuPanel.add(consoleLabel);
+		frame.repaint();
+		
+		
+	}
 
 	/**
-	 * This method draws the start page for the ValleyBike Simulator It was built
-	 * with help from: https://www.javatpoint.com/java-swing
+	 * This method draws the start page for the ValleyBike Simulator. 
+	 * Most of the GUI elements were built based on code from: https://www.javatpoint.com/java-swing
 	 */
 	public static void drawHomePage() {
 		// creating instance of JFrame
 		// frame = new JFrame();
+		// stops menu from printing everytime enter is pressed in console
+		gui = true;
 
 		// setting up the panel
 		homePanel = new JPanel();
@@ -1564,7 +1714,7 @@ public class ValleyBikeSim {
 		enterCreate.setBounds(100, 230, 100, 40);
 
 		enterLogin = new JButton("Login");
-		enterLogin.setBounds(100, 280, 100, 40);
+		enterLogin.setBounds(100, 340, 100, 40);
 
 		logout = new JButton("Log Out");
 		logout.setBounds(width - 120, 20, 100, 40);
@@ -1591,10 +1741,10 @@ public class ValleyBikeSim {
 				IDtext.setBounds(100, 200, 150, 20);
 
 				userPass = new JLabel("Please enter your password");
-				userPass.setBounds(100, 230, 250, 20);
+				userPass.setBounds(100, 260, 250, 20);
 
 				passText = new JTextField("Password");
-				passText.setBounds(100, 260, 150, 20);
+				passText.setBounds(100, 290, 150, 20);
 
 				// add to frame and repaint
 				frame.add(userID);
@@ -1665,8 +1815,7 @@ public class ValleyBikeSim {
 			}
 		});
 
-		// next is setting up a action listener for home that returns us to the main
-		// page
+		// next is setting up a action listener for home that returns us to the main page
 
 		// setting the size, layout, and visibility of the frame
 		frame.setSize(width, height);
@@ -1760,14 +1909,15 @@ public class ValleyBikeSim {
 			if (logInOptions.contains(choice)) {
 				break;
 			}
+			if (choice.equals("0")) { // log in
+				logIn();
+			} else if (choice.equals("1")) { // create a new account
+				createAccount();
+			}
 		}
 
-		if (choice.equals("0")) { // log in
-			logIn();
-		} else if (choice.equals("1")) { // create a new account
-			createAccount();
-		}
-
+		
+		while(gui == false) {
 		// menu for users
 		if (currentUser.getType() == 0) {
 			while (true) {
@@ -1868,6 +2018,7 @@ public class ValleyBikeSim {
 				}
 			}
 
+		}
 		}
 	}
 
