@@ -2088,10 +2088,8 @@ public class ValleyBikeSim {
 					trackBikes();
 					System.out.println("We are working on locating this bike.");
 				} else if (input.equals("7")) { // view total ride history
-
-				} else if (input.equals("6")) { // view total ride history
 					viewRideHistory();
-				} else if (input.equals("7")) { // resolve maintenance issue
+				} else if (input.equals("8")) { // resolve maintenance issue
 					maintenance();
 				}
 			}
