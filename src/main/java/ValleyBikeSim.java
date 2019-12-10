@@ -1210,12 +1210,14 @@ public class ValleyBikeSim {
 			JMenuItem addStation = new JMenuItem("Add Station");
 			JMenuItem saveStations = new JMenuItem("Save Station List");
 			JMenuItem equalStations = new JMenuItem("Equalize Stations");
+			JMenuItem trackBikes = new JMenuItem("Track Bikes");
 			JMenuItem resolveRides = new JMenuItem("Resolve Ride Data");
 			// adding items to the menu
 			popupmenu.add(viewStations);
 			popupmenu.add(addStation);
 			popupmenu.add(saveStations);
 			popupmenu.add(equalStations);
+			popupmenu.add(trackBikes);
 			popupmenu.add(resolveRides);
 
 			// creating event listeners for menu items
@@ -1251,6 +1253,13 @@ public class ValleyBikeSim {
 					equalizeStations();
 				}
 			});
+			trackBikes.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					itemSelected.setText("Track a bike MenuItem clicked.");
+					inConsole();
+					trackBikes();
+				}
+			});
 			resolveRides.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					itemSelected.setText("Resolve Ride Data MenuItem clicked.");
@@ -1270,8 +1279,8 @@ public class ValleyBikeSim {
 
 			// add elements to panel
 			menuPanel.add(menuType);
-
 		}
+		
 
 		// update frame and repaint
 		frame.remove(userID);
@@ -1378,17 +1387,21 @@ public class ValleyBikeSim {
 				Scanner c = new Scanner(System.in); // Create a Scanner object
 				String input = c.next();
 				if (input.equalsIgnoreCase("back") || input.equalsIgnoreCase("b")) {
+					c.close();
 					System.out.println();
 					extracted();
 					return;
 				}
 				if (input.equalsIgnoreCase("y") || input.equalsIgnoreCase("yes")) {
+					c.close();
 					currentUser.setMembership(0);
 					System.out.println("\nYour membership has been canceled.\n");
 					return;
 				} else if (input.equalsIgnoreCase("n") || input.equalsIgnoreCase("no")) {
+					c.close();
 					return;
 				}
+				c.close();
 			}
 
 		}
@@ -1475,26 +1488,48 @@ public class ValleyBikeSim {
 		saveStationList();
 	}
 	public static void trackBikes() {
-		boolean bikeFound = false;
+		String bikeID;
+		String missingBike; //Bike we are searching for
+		int bikeLocation; //Where the bike is located (at a station or with a user)
 		Scanner adminInput = new Scanner(System.in);
-		while(bikeFound == false) {
-			System.out.print("Please enter the bike ID of the pedelec bike you are searching for.");
-			String bikeID = adminInput.nextLine();
-			for(Bikes b:all_bikes){
-				if(b.getbikeID() == bikeID) {
-					int status  = b.getBikeStatus();
-					if(status != 1) { //Bike is not in use
-						System.out.print("Bike ID: " +b.getbikeID() +" is at Station: "+b.getStation());
-						bikeFound = true;
-						adminInput.close();
-					}
-					else if(status == 1) {
-						System.out.print("User: " + b.getUser() + "is currenty using Bike ID: " +b.getbikeID());
-						adminInput.close();
-					}
-				}
+		System.out.print("Please enter the bike ID of the pedelec bike you are searching for.");
+		System.out.println("Type 'back' to return to menu.");
+		missingBike = adminInput.nextLine();
+		if (missingBike.equalsIgnoreCase("back") || missingBike.equalsIgnoreCase("b")) {
+			adminInput.close();
+			System.out.println();
+			extracted();
+			 return;
+		}
+		for (Bikes b : all_bikes) {
+			if (b.getbikeID() == missingBike && b.getBikeStatus() != 1) {
+				bikeID = b.getbikeID();
+				bikeLocation = b.getStation();
+				System.out.print("Bike: " + bikeID + "is at Station: "+ bikeLocation);
+				System.out.println();
+				break;
+			}
+			else if(b.getBikeStatus() == 1) {
+				bikeLocation = b.getUser();
+				bikeID = b.getbikeID();
+				System.out.print("Bike: " +bikeID +" is currently checked out by User: "+ bikeLocation +". ");
+				break;
 				
 			}
+		}
+		adminInput.close();
+		String adminDec;
+		System.out.print("Do you want to search for another bike? y/n?");
+		Scanner adminRes = new Scanner(System.in);
+		adminDec = adminRes.nextLine();
+		if(adminDec.equalsIgnoreCase("yes") || adminDec.equalsIgnoreCase("y")) {
+			adminRes.close();
+			trackBikes();
+		}else if (adminDec.equalsIgnoreCase("no") || adminDec.equalsIgnoreCase("n")) {
+			adminRes.close();
+			System.out.println();
+			extracted();
+			 return;
 		}
 	}
 // -----------------------------------------------------------------------------------------------------------------
@@ -1528,7 +1563,7 @@ public class ValleyBikeSim {
 					
 				}
 
-			}
+			
 		}
 
 		// If user does not have a ride in progress, prompt the user to enter stationID 
@@ -1618,6 +1653,7 @@ public class ValleyBikeSim {
 			}
 
 		}
+	}
 
 	}
 
@@ -1652,7 +1688,7 @@ public class ValleyBikeSim {
 
 		}
 
-		// Get staion id of the station the user want to return bike to
+		// Get station id of the station the user want to return bike to
 		while (stationId == -1) {
 			System.out.print("Please enter station ID at current location: ");
 			System.out.println("Type 'back' to return to menu.");
