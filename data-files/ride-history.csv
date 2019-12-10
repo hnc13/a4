@@ -1,4 +1,4 @@
-User ID,Bike ID,Start Station ID,Destination Station ID,Start Time,End Time,Completed Ride
+User ID,Bike ID,Start Station ID,Destination Station ID, Start Time, End Time, Completed Ride
 6762,0,25,26,12/8/19 23:47,12/8/19 23:50,1
 6520,0,27,31,12/8/19 23:51,12/8/19 23:52,1
 9911,0,24,22,12/8/19 23:55,12/9/19 11:19,1
@@ -12,3 +12,7 @@ User ID,Bike ID,Start Station ID,Destination Station ID,Start Time,End Time,Comp
 6663,P138,20,21,12/9/19 13:45,12/9/19 13:45,1
 2294,P146,23,31,12/9/19 14:05,12/9/19 14:06,1
 2294,P137,20,24,12/9/19 14:27,12/9/19 14:28,1
+9911,P121,29,28,12/9/19 17:21,12/9/19 17:21,1
+9911,P114,30,30,12/9/19 17:24,12/9/19 20:29,1
+9911,P175,22,24,12/9/19 20:30,12/9/19 20:31,1
+7178,P105,24,31,2019/12/09 21:05:40,2019/12/09 21:06:04,1
