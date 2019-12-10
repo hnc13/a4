@@ -1401,7 +1401,7 @@ public class ValleyBikeSim {
 				a.setMembership(mem);
 			}
 		}
-		int cost = Integer.parseInt(costOptions.get(currentUser.getMembership()));   //Integer.parseInt(choice) - 1));
+		int cost = Integer.parseInt(costOptions.get(Integer.parseInt(choice) - 1));
 		payment(cost);
 		saveAccountList();
 		System.out.println("Congratulations! You now have a ValleyBike " + memsOptions.get(Integer.parseInt(choice) - 1)
@@ -1794,10 +1794,10 @@ public class ValleyBikeSim {
 		home.setBounds(0, 0, 230, 90);
 
 		logIn = new JButton("Log In");
-		logIn.setBounds(110, 200, 100, 40);// x axis, y axis, width, height
+		logIn.setBounds(110, 250, 100, 40);// x axis, y axis, width, height
 
 		createAccount = new JButton("Create Account");
-		createAccount.setBounds(230, 200, 100, 40);// x axis, y axis, width, height
+		createAccount.setBounds(230, 250, 100, 40);// x axis, y axis, width, height
 
 		enterCreate = new JButton("Enter");
 		enterCreate.setBounds(100, 230, 100, 40);
