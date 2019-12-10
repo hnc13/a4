@@ -1474,6 +1474,29 @@ public class ValleyBikeSim {
 		}
 		saveStationList();
 	}
+	public static void trackBikes() {
+		boolean bikeFound = false;
+		Scanner adminInput = new Scanner(System.in);
+		while(bikeFound == false) {
+			System.out.print("Please enter the bike ID of the pedelec bike you are searching for.");
+			String bikeID = adminInput.nextLine();
+			for(Bikes b:all_bikes){
+				if(b.getbikeID() == bikeID) {
+					int status  = b.getBikeStatus();
+					if(status != 1) { //Bike is not in use
+						System.out.print("Bike ID: " +b.getbikeID() +" is at Station: "+b.getStation());
+						bikeFound = true;
+						adminInput.close();
+					}
+					else if(status == 1) {
+						System.out.print("User: " + b.getUser() + "is currenty using Bike ID: " +b.getbikeID());
+						adminInput.close();
+					}
+				}
+				
+			}
+		}
+	}
 // -----------------------------------------------------------------------------------------------------------------
 	// **RIDE HISTORY**
 
@@ -2062,7 +2085,7 @@ public class ValleyBikeSim {
 				} else if (input.equals("5")) { // resolve ride data
 					resolveRideData();
 				} else if (input.equals("6")) { // track bikes
-					// TODO: call track bikes
+					trackBikes();
 					System.out.println("We are working on locating this bike.");
 				} else if (input.equals("7")) { // view total ride history
 
