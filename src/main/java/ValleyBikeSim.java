@@ -20,38 +20,36 @@ import java.text.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-//This program is based on code base 656 by Emma Tanur and Grace Bratzel. It creates 
-//creates a simulator for ValleyBikes. The user can interact with the program to
-//view the list of all stations, save the station list to a csv files, record a ride, read in ride data 
-//from a file and summarize it, and distribute pedelecs between stations and more outlined in the ReadMe file.
+// This program is based on code base 656 by Emma Tanur and Grace Bratzel. 
+// It creates a simulator for ValleyBike. The user can interact with the program to
+// The readMe.txt contains further documentation regarding the many functionalities provided to users,
+// and how to interact with the system.
 
-///Authors: Hannah, Jess, Mae, Nashshaba
+// Authors: Hannah, Jess, Mae, Nashshaba
+
 public class ValleyBikeSim {
-
-//-----------------------------------------------------------------------------------------------------------------//
 	// ***** Static Data Structures ****//
 
-	/**
-	 * List containing Station objects
+	/** List containing Station objects
 	 */
 	private static List<Station> all_stations;
-	/**
-	 * List containing Ride objects.
+	/** List containing Ride objects.
 	 */
 	private static List<Ride> all_rides;
-	/**
-	 * List containing Account objects
+	/** List containing Account objects
 	 */
 	private static List<Account> all_accounts;
-	/**
-	 * List containing Ride History objects
+	/** List containing Ride History objects
 	 */
 	private static List<RideHistory> ride_history;
-	/**List containing Bike objects
+	/**  List containing Bike objects
 	 */
 	private static List<Bikes> all_bikes; // List that contains pedelec bike objects
 	private static LocateBikes bikeCollection = new LocateBikes();
-	// Path of csv file
+	
+	/**
+	 * Path to stations-data.csv file
+	 */
 	private static String path = "data-files/station-data.csv";
 
 	/**
@@ -113,8 +111,8 @@ public class ValleyBikeSim {
 	 * Print ride history data of all users in the console.
 	 */
 	public static void viewRideHistory() {
-		System.out.printf("%s %s %s	%s	%s	%s %s %n", "User ID", "Bike ID", "Start Station", "End Station", "Start time",
-				"End Time","Completed Ride");
+		System.out.printf("%s %s %s	%s	%s	%s %s %n", "User ID", "Bike ID", "Start Station", "End Station",
+				"Start time", "End Time", "Completed Ride");
 
 		for (RideHistory r : ride_history) {
 			System.out.printf("%s	", r.getUserID());
@@ -127,7 +125,6 @@ public class ValleyBikeSim {
 			System.out.println();
 		}
 	}
-
 
 	/**
 	 * Print ride data from 'all-rides' data structure that is populated by either
@@ -162,28 +159,27 @@ public class ValleyBikeSim {
 		System.out.println();
 		System.out.println();
 	}
-	
+
 	/**
-	 * View Bike at Station.
-	 * @return list of bikes available at a station
+	 * Print all available bikes at a particular station.
+	 * @param stationID - ID of the station user wants to rent a bike from.
 	 */
 	public static void viewBikesAtStation(int stationID) {
 		String bikeID;
-		for(Bikes b :all_bikes) {
-			if(b.getStation() == stationID && b.getBikeStatus() !=1) {
+		for (Bikes b : all_bikes) {
+			if (b.getStation() == stationID && b.getBikeStatus() != 1) {
 				bikeID = b.getbikeID();
-				System.out.print("Bike ID: "+bikeID );
+				System.out.print("Bike ID: " + bikeID);
 				System.out.println();
 			}
 		}
-		
+
 	}
 //-----------------------------------------------------------------------------------------------------------------//	
 	// ***** Helper Methods ****//
 
 	/**
 	 * Convert Station object to string
-	 * 
 	 * @param obj - Station Object
 	 * @return a string containing all object attributes of a station
 	 */
@@ -200,14 +196,13 @@ public class ValleyBikeSim {
 
 	/**
 	 * Convert Ride History object to string
-	 * 
 	 * @param obj - Ride History Object
 	 * @return a string containing all object attributes of a ride
 	 */
 	public static String rideHistoryToString(RideHistory obj) {
 
 		String temp = obj.getUserID() + "," + obj.getBikeID() + "," + obj.getStartStation() + "," + obj.getDestStation()
-				+ "," + obj.getStartTime() + "," + obj.getEndTime()+","+obj.getCompletedRide();
+				+ "," + obj.getStartTime() + "," + obj.getEndTime() + "," + obj.getCompletedRide();
 		return temp;
 	}
 
@@ -222,19 +217,21 @@ public class ValleyBikeSim {
 				+ obj.getBalance();
 		return temp;
 	}
-	
+
 	/**
 	 * Convert Bike object to string
+	 * 
 	 * @param obj - Bike Object
 	 * @return a string containing all object attributes of a bike
 	 */
 	public static String bikeToString(Bikes obj) {
-		String temp = obj.getbikeID() + "," + obj.getStation() + "," + obj.getBikeStatus() + "," + obj.getUser();	
+		String temp = obj.getbikeID() + "," + obj.getStation() + "," + obj.getBikeStatus() + "," + obj.getUser();
 		return temp;
 	}
 
 	/**
-	 * Does station with passed station ID already exist? 
+	 * Does station with passed station ID already exist?
+	 * 
 	 * @param id - ID of a station
 	 * @return true if such a station exists or false if no such station exists
 	 */
@@ -246,18 +243,23 @@ public class ValleyBikeSim {
 		}
 		return false;
 	}
-	
+
+	/**
+	 * Is a given bike available to rent/use?
+	 * 
+	 * @param bikeID - ID of bike user wants to rent/use
+	 * @return true if the bike is not being used or false if it is currently being used. 
+	 */
 	public static boolean bikeNotInUse(String bikeID) {
 		for (Bikes b : all_bikes) {
 			if (b.getbikeID().equals(bikeID)) {
-				if(b.getBikeStatus() ==0) {
+				if (b.getBikeStatus() == 0) {
 					return true;
 				}
 			}
 		}
 		return false;
 	}
-
 
 	/**
 	 * Calculate total number of bikes in all stations.
@@ -289,9 +291,9 @@ public class ValleyBikeSim {
 
 	/**
 	 * Calculate total capacity of all stations.
+	 * 
 	 * @return total capacity of stations in the ValleBike System
 	 */
-	// Calculate total capacity for all stations
 	public static int totalCapacity() {
 		int total = 0;
 		Iterator<Station> iterator = all_stations.listIterator();
@@ -300,32 +302,13 @@ public class ValleyBikeSim {
 		}
 		return total;
 	}
-	
-	//
-//	public static void makeBikeUnavilable(String bikeID, int userID) {
-//		for(Bikes b: all_bikes) {
-//			if(b.getbikeID().equals(bikeID)) {
-//				b.setBikeStatus(1);
-//				b.setUserID(userID);
-//				saveBikeLocation();
-//			}
-//		}
-//	}
-//	
-//	public static void makeBikeAvilable(String bikeID) {
-//		for(Bikes b: all_bikes) {
-//			if(b.getbikeID().equals(bikeID)) {
-//				b.setBikeStatus(0);
-//				b.setUserID(0);
-//				saveBikeLocation();
-//			}
-//		}
-//	}
 
-//-----------------------------------------------------------------------------------------------------------------	
+//-----------------------------------------------------------------------------------------------------------------//	
 	// ***** Save Data ****//
 
-	// Write current station list to a file. Updates current csv file that was read
+	/**
+	 * Save all data stored in 'all_station' list in 'station-data.csv'  file.
+	 */
 	public static void saveStationList() {
 		try {
 			FileWriter myWriter = new FileWriter(path);
@@ -342,12 +325,14 @@ public class ValleyBikeSim {
 		}
 		System.out.println("Your station has been saved.");
 	}
-
-	// Updates current ride-history.csv file that was read
+	/**
+	 * Save all data stored in 'ride_hstory' list in 'ride-history.csv'  file.
+	 */
 	public static void saveRideHistory() {
 		try {
 			FileWriter myWriter = new FileWriter("data-files/ride-history.csv");
-			myWriter.append("User ID,Bike ID,Start Station ID,Destination Station ID, Start Time, End Time, Completed Ride");
+			myWriter.append(
+					"User ID,Bike ID,Start Station ID,Destination Station ID, Start Time, End Time, Completed Ride");
 			myWriter.append("\n");
 			for (RideHistory r : ride_history) {
 				myWriter.append(rideHistoryToString(r));
@@ -360,7 +345,9 @@ public class ValleyBikeSim {
 		}
 	}
 
-	// Write current account list to a file. Updates current csv file that was read
+	/**
+	 * Save all data stored in 'all_accounts' list in 'Accounts.csv'  file.
+	 */
 	public static void saveAccountList() {
 		try {
 			FileWriter myWriter = new FileWriter("data-files/Accounts.csv");
@@ -378,27 +365,31 @@ public class ValleyBikeSim {
 			e.printStackTrace();
 		}
 	}
-	
-	// Update 'bikeLocation-data.csv
-		public static void saveBikeLocation() {
-			try {
-				FileWriter myWriter = new FileWriter("data-files/bikeLocation-data.csv");
-				myWriter.append("bikeID,station,inUse,UserID");
-				myWriter.append("\n");
-				for (Bikes b : all_bikes) {
-					myWriter.append(bikeToString(b));
-					myWriter.append("\n");
-				}
-				myWriter.flush();
-				myWriter.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-//-----------------------------------------------------------------------------------------------------------------		
-	// ** ADD STATION **
 
-	// Collect user input and add a Station object to local field all_stations
+	/**
+	 * Save all data stored in 'all_bikes' list in 'bikeLocation-data.csv'  file.
+	 */
+	public static void saveBikeLocation() {
+		try {
+			FileWriter myWriter = new FileWriter("data-files/bikeLocation-data.csv");
+			myWriter.append("bikeID,station,inUse,UserID");
+			myWriter.append("\n");
+			for (Bikes b : all_bikes) {
+				myWriter.append(bikeToString(b));
+				myWriter.append("\n");
+			}
+			myWriter.flush();
+			myWriter.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+//-----------------------------------------------------------------------------------------------------------------		
+	// ***** Add Data ****//
+
+	/**
+	 * Allow ValleyBike system administrator to add a new station.
+	 */
 	public static void userAddStation() {
 		Scanner c = new Scanner(System.in); // Create a Scanner object
 		String input = null;
@@ -407,7 +398,7 @@ public class ValleyBikeSim {
 		System.out.println("Please fill out the information requested below.");
 		System.out.println("Type 'back' to return to main menu.");
 
-		// input station id (catches non-integer inputs and duplicate IDs)
+		// Input station id (catches non-integer inputs and duplicate IDs)
 		int id = -1;
 		while (id == -1) {
 			System.out.println("Station ID: ");
@@ -465,7 +456,7 @@ public class ValleyBikeSim {
 				extracted();
 				return;
 			}
-			try { // check that input is a number
+			try { // Check whether input is a number
 				pedelecs = Integer.parseInt(input);
 			} catch (Exception e) {
 				System.out.println(
@@ -509,7 +500,7 @@ public class ValleyBikeSim {
 				extracted();
 				return;
 			}
-			try { // check that input is a number
+			try { // Check whether input is a number
 				capacity = Integer.parseInt(input);
 			} catch (Exception e) {
 				System.out.println("'" + input + "' is not an accepted answer. Please try again.");
@@ -543,8 +534,9 @@ public class ValleyBikeSim {
 			}
 		}
 
-		// Collect user input for number of kiosks (catch non-integer inputs)
-		/*
+		
+		/* Collect user input for number of kiosks (catch non-integer inputs)
+		 * 
 		 * While the user may input any number of kiosks, we assume that all we care
 		 * about is whether the station has any kiosks. So we enter this data as a true
 		 * (there are 1 or more kiosks) or false (there are no kiosks).
@@ -569,9 +561,9 @@ public class ValleyBikeSim {
 				kiosk = true;
 			}
 		}
-
-		// Calculate available docks
-		/*
+ 
+		/* Calculate available docks
+		 * 
 		 * No need to ask the user about this, since we can calculate it based on other
 		 * input.
 		 */
@@ -586,10 +578,17 @@ public class ValleyBikeSim {
 		System.out.println();
 	}
 
-//-----------------------------------------------------------------------------------------------------------------		
-	// Add a Station object to all_stations
+
+	/**
+	 * Parse data from given csv file and add to all_stations list
+	 * <p>
+	 * all_stations is a list that contains all station objects
+	 * <p>
+	 * 
+	 * @param data - file path to station-data.csvv
+	 */
 	public static void addStation(String data) {
-		String[] temp = data.split(","); // turn data into an array
+		String[] temp = data.split(","); // Turn data into an array
 		// Parse out the string
 		int id = Integer.parseInt(temp[0]);
 		String name = temp[1];
@@ -608,9 +607,16 @@ public class ValleyBikeSim {
 		all_stations.add(myStation);
 	}
 
-	// Add a pedelec bike object to all_bikes
+	/**
+	 * Parse data from given csv file and add to all_bikes list
+	 * <p>
+	 * all_bikes is a list that contains all bike objects
+	 * <p>
+	 * 
+	 * @param data - file path to bikeLocation-data.csv
+	 */
 	public static void addBike(String data) {
-		String[] temp = data.split(","); // turn data into an array
+		String[] temp = data.split(","); // Turn data into an array
 		// Parse out the string
 		String pedID = temp[0];
 		int station = Integer.parseInt(temp[1]);
@@ -625,9 +631,16 @@ public class ValleyBikeSim {
 		all_bikes.add(pedelec);
 	}
 
-	// Add an Account object to all_accounts
+	/**
+	 * Parse data from given csv file and add to all_accounts list
+	 * <p>
+	 * all_accounts is a list that contains all account objects
+	 * <p>
+	 * 
+	 * @param data - file path to Account.csv
+	 */
 	public static void addAccount(String data) {
-		String[] temp = data.split(","); // turn data into an array
+		String[] temp = data.split(","); // Turn data into an array
 		// Parse out the string
 		int type = Integer.parseInt(temp[0]);
 		int id = Integer.parseInt(temp[1]);
@@ -640,9 +653,16 @@ public class ValleyBikeSim {
 		all_accounts.add(account);
 	}
 
-	// Add an Ride History object to ride_history
+	/**
+	 * Parse data from given csv file and add to ride_history list
+	 * <p>
+	 * ride_history is a list that contains ride records of all users
+	 * <p>
+	 * 
+	 * @param data - file path to ride-history.csv
+	 */
 	public static void addRideHistory(String data) {
-		String[] temp = data.split(","); // turn data into an array
+		String[] temp = data.split(","); // Turn data into an array
 		// Parse out the string
 		int userID = Integer.parseInt(temp[0]);
 		String bikeID = temp[1];
@@ -653,12 +673,16 @@ public class ValleyBikeSim {
 		int completedRide = Integer.parseInt(temp[6]);
 
 		// Create a new ride history
-		RideHistory ride = new RideHistory(userID, bikeID, startStationID, destStationID, startTime, endTime, completedRide);
+		RideHistory ride = new RideHistory(userID, bikeID, startStationID, destStationID, startTime, endTime,
+				completedRide);
 		ride_history.add(ride);
 	}
 //-----------------------------------------------------------------------------------------------------------------		
 
-	// Summarize rides after parsing a list of arrays in string form
+	/**
+	 * Summarize rides after parsing a list of arrays in string form (from A1 code base).
+	 * @param data - List of String array containing rides.
+	 */
 	public static void summarizeRides(List<String[]> data) {
 		int rides = data.size(); // Number of rides in file
 		long avg_min = 0; // Average ride time
@@ -669,7 +693,7 @@ public class ValleyBikeSim {
 		// Iterate through saved data from file
 		for (String[] arr : data) {
 			// Station id recorded must match a Valley Bike station ID
-			boolean station1_exists = false; // set to false
+			boolean station1_exists = false; // Set to false
 			boolean station2_exists = false;
 			for (Station s : all_stations) {
 				if (s.getID() == Integer.parseInt(arr[1])) {
@@ -706,9 +730,11 @@ public class ValleyBikeSim {
 		System.out.println(
 				"This ride list contains " + rides + " rides with an average ride time of " + avg_min + " minutes.");
 	}
-//-----------------------------------------------------------------------------------------------------------------		
-
-	// Read a data file with ride information and calls summarizeRides() method
+	
+	/**
+	 * Read a data file with ride information and calls summarizeRides() method (from A1 code base).
+	 * @throws ParseException
+	 */
 	public static void resolveRideData() throws ParseException {
 		List<String[]> data = new ArrayList<String[]>(); // Holds rides listed in file
 		while (true) {
@@ -744,7 +770,7 @@ public class ValleyBikeSim {
 			}
 			break;
 		}
-		summarizeRides(data); // call for summary of rides
+		summarizeRides(data); // Call for summary of rides
 
 	}
 
@@ -752,7 +778,7 @@ public class ValleyBikeSim {
 		return;
 	}
 
-	// Sort list all_stations by station capacity (greatest to smallest)
+	// Sort all_stations by station capacity (greatest to smallest)
 	public static void sortStationsByCapacity() {
 		Comparator<Station> compareByCapacity = new Comparator<Station>() {
 			@Override
@@ -821,7 +847,9 @@ public class ValleyBikeSim {
 		viewBikeStats();
 	}
 
-	// Record ride data using user input
+	/**
+	 * Record ride data using user input (from A1 code base)
+	 */
 	public static void recordRide() {
 		int station_id = 0;
 		int new_ride = 1; // 1 = new ride; 0 = in-progress ride
@@ -847,15 +875,13 @@ public class ValleyBikeSim {
 			if (type.equals("P")) {
 				break;
 			} else if (type.equals("B")) {
-				System.out.println("No bikes available now."); // assumptions: no bikes are available at any of the
-																// stations
+				System.out.println("No bikes available now."); // Assumptions: no bikes are available at any of the stations
 			} else {
 				System.out.println("Invalid input.");
 			}
 		}
 
-		// Check to see if user has an in-progress ride. If so, we are recording the end
-		// of a ride.
+		// Check to see if user has an in-progress ride. If so, we are recording the end of a ride.
 		for (Ride r : all_rides) {
 			if (r.getUser() == user && r.getEnd() == null) { // Check to see if the user has an in-progress ride
 				new_ride = 0;
@@ -906,8 +932,8 @@ public class ValleyBikeSim {
 	}
 
 	/**
-	 * Allows a new user to create an account. Only users can create accounts, not
-	 * admins.
+	 * Allow a new user to create an account. Only users can create accounts, not
+	 * ValleyBike administrators.
 	 */
 	public static void createAccount() {
 		int ID = 0;
@@ -938,7 +964,7 @@ public class ValleyBikeSim {
 		System.out.println("Please fill out the information requested below.");
 		System.out.println("Type 'back' to return to main menu.");
 
-		// input password
+		// Input password
 		while (password == null) {
 			System.out.println("Create password: ");
 			password = IDtext.getText(); // c.nextLine();
@@ -961,7 +987,7 @@ public class ValleyBikeSim {
 		congrats = new JLabel("Congrats! Your account has been created. Your user ID is " + ID + ".");
 		congrats.setBounds(80, 150, 500, 20);
 
-		// activate log out button
+		// Activate log out button
 
 		home = new JButton("Home Menu");
 		home.setBounds(200, 180, 150, 40);
@@ -973,7 +999,7 @@ public class ValleyBikeSim {
 			}
 		});
 
-		// updating the GUI
+		// Update the GUI
 		frame.remove(IDtext);
 		frame.remove(userPass);
 		frame.remove(enterCreate);
@@ -985,7 +1011,7 @@ public class ValleyBikeSim {
 	}
 
 	/**
-	 * Allows a user to log into ValleyBike
+	 * Allow a user to log into ValleyBike
 	 * 
 	 * @throws ParseException
 	 */
@@ -996,9 +1022,7 @@ public class ValleyBikeSim {
 		boolean trueID = false;
 		boolean rightPass = false;
 
-		// receives and checks the username
-
-		// System.out.println("Please enter your user ID: ");
+		// Receives and checks the username
 		while (true) {
 			input = IDtext.getText(); // s.next(); //
 			for (Account a : all_accounts) {
@@ -1014,13 +1038,9 @@ public class ValleyBikeSim {
 			System.out.println("That user ID is incorrect. Please try again.");
 		}
 
-		// receives and checks the password
+		// Receives and checks the password
 
-		// System.out.println("Please enter your password: ");
-		// Scanner c = new Scanner(System.in);
-
-		// while loop is messing it up
-		// need to figure out how to handle incorrect input
+		// TODO: While loop is messing it up. Need to figure out how to handle incorrect input.
 		while (true) {
 			input = passText.getText(); // c.next(); //
 			for (Account a : all_accounts) {
@@ -1063,7 +1083,7 @@ public class ValleyBikeSim {
 			itemSelected.setHorizontalAlignment(JLabel.CENTER);
 			itemSelected.setSize(400, 100);
 
-			// creating a popupmenu
+			// Create a pop-up menu
 			final JPopupMenu popupmenu = new JPopupMenu("User");
 			JMenuItem viewStations = new JMenuItem("View Station List");
 			JMenuItem membership = new JMenuItem("Purchase/Change Membership");
@@ -1077,7 +1097,7 @@ public class ValleyBikeSim {
 			popupmenu.add(startRd);
 			popupmenu.add(endRd);
 
-			// creating event listeners for menu items
+			// Create event listeners for menu items
 			menuPanel.addMouseListener(new MouseAdapter() {
 				public void mouseClicked(MouseEvent e) {
 					popupmenu.show(menuPanel, e.getX(), e.getY());
@@ -1114,7 +1134,7 @@ public class ValleyBikeSim {
 				}
 			});
 
-			// add elements to panel
+			// Add elements to panel
 			menuPanel.add(menuType);
 			menuPanel.add(popupmenu);
 
@@ -1185,16 +1205,16 @@ public class ValleyBikeSim {
 				}
 			});
 
-			// add elements to panel
+			// Add elements to panel
 			menuPanel.add(menuType);
 			menuPanel.add(popupmenu);
 
-			// add elements to panel
+			// Add elements to panel
 			menuPanel.add(menuType);
 
 		}
 
-		// update frame and repaint
+		// Update frame and repaint
 		frame.remove(userID);
 		frame.remove(IDtext);
 		frame.remove(userPass);
@@ -1210,18 +1230,18 @@ public class ValleyBikeSim {
 	}
 
 	/**
-	 * Allows the user to purchase a membership.
+	 * Allow user to purchase a membership.
 	 */
 	public static void buyMem() {
 		int mem = 0;
 		String choice;
-		String[] num = new String[] { "1", "2", "3" }; // membership options
+		String[] num = new String[] { "1", "2", "3" }; // Membership options
 		List<String> memOptions = Arrays.asList(num);
 
 		String[] mems = new String[] { "Founding Member", "Annual", "Monthly" }; // membership types
 		List<String> memsOptions = Arrays.asList(mems);
 
-		String[] costs = new String[] { "90", "80", "20" }; // membership costs
+		String[] costs = new String[] { "90", "80", "20" }; // Membership costs
 		List<String> costOptions = Arrays.asList(costs);
 
 		if (currentUser.getMembership() != 0) {
@@ -1275,10 +1295,10 @@ public class ValleyBikeSim {
 	}
 
 	/**
-	 * Allows the user to cancel their membership.
+	 * Allow user to cancel their membership.
 	 */
 	public static void cancelMem() {
-		String[] mems = new String[] { "Founding Member", "Annual", "Monthly" }; // membership types
+		String[] mems = new String[] { "Founding Member", "Annual", "Monthly" }; // Membership types
 		List<String> memsOptions = Arrays.asList(mems);
 
 		while (true) {
@@ -1311,7 +1331,8 @@ public class ValleyBikeSim {
 	}
 
 	/**
-	 * Allows the user to make a payment.
+	 * Allow user to make a payment.
+	 * @param cost - Cost of ride
 	 */
 	public static void payment(int cost) {
 		Random rand = new Random();
@@ -1336,6 +1357,9 @@ public class ValleyBikeSim {
 
 	}
 
+	/**
+	 * Request maintenance.
+	 */
 	public static void maintenance() {
 		Scanner c = new Scanner(System.in); // Create a Scanner object
 		String input;
@@ -1389,37 +1413,37 @@ public class ValleyBikeSim {
 	// **RIDE HISTORY**
 
 	/**
-	 * Allows user to rent bike given that: (i) User has ValleyBike Membership, (ii)
-	 * station ID is valid and station has available pedelecs.
+	 * Allow user to rent bike given that: 
+	 * <p>(i) User is logged in<p> 
+	 * <p>(ii) There are available bikes at user's current station<p>
 	 */
 	public static void rentBike() {
-		int user = currentUser.getID();
-		int stationId = -1;
+		int user = currentUser.getID();	
+		int stationId = -1;	// Default value of stationId
 		int rideNotInProgress = 1; // 1 = new ride; 0 = in-progress ride
-		int end = 1;
-		String bikeID = "0";
+		int end = 1; // Variable used to enter/exit while loop
+		String bikeID = "0"; // Default value of bikeID
 
 		// Create Scanner object
 		Scanner userInput = new Scanner(System.in);
 
+		// Loop through ride record to check if user has a ride in progress
 		for (RideHistory rideObj : ride_history) {
-			if (rideObj.getUserID() == user) {
-				System.out.println(rideObj.getUserID());
-				System.out.println("user = " + user);
-				System.out.println("endTime = " + rideObj.getEndTime());
-				if (rideObj.getEndTime().equals("0")) {
+			if (rideObj.getUserID() == user) {	
+				if (rideObj.getEndTime().equals("0") && rideObj.getCompletedRide()==0) {
 					rideNotInProgress = 0;
 
 					// If ride is in progress do not allow user to rent bike:
-					System.out.println("You have already rented a pedelec. Please return pedelec to rent another.");
+					System.out.println("You have already rented a bike. Please return current bike to rent another.");
 					end = 2;
-					break;
-					// Check to see if the user has an in-progress ride
+					break; // Break out of for loop
+					
 				}
 
 			}
 		}
 
+		// If user does not have a ride in progress, prompt the user to enter stationID 
 		while (stationId == -1 && end == 1) {
 			System.out.print("Please enter station ID at current location: ");
 			System.out.println("Type 'back' to return to menu.");
@@ -1429,81 +1453,77 @@ public class ValleyBikeSim {
 				extracted();
 				return;
 			}
-			try {
-
+			try { // If user enters a station ID, check whether station exists, if yes then set stationId to entered value
 				if (stationExists(Integer.parseInt(input))) {
 					stationId = Integer.parseInt(input);
-				} else {
+					break;
+				} else { // Else prompt user to enter stationID that exists
 					System.out.println("No such station exists. \nPlease enter valid station ID.");
 				}
-			} catch (Exception e) { // check that input is a number
+			} catch (Exception e) { // Check that input is a number
 				System.out.println("'" + input + "' is not an accepted Station ID. Please try again.");
 			}
 		}
 
-		//
 
 		if (end == 1) {
-
-			if (rideNotInProgress == 1) {
+			if (rideNotInProgress == 1) { // If user has no rides in progress, allow user to rent bike
 				// Iterate through stations to find current station data
 				for (Station station : all_stations) {
 					if (station.getID() == stationId) {
 						if (station.getPeds() != 0) {// If station has available bikes
-							while (bikeID.equals("0")) {
-								System.out.println("Please enter the bikeID of a bike from the following lists of bikes available at station "+stationId);
-								System.out.println("Type 'back' to return to menu.");
+							while (bikeID.equals("0")) { // Prompt user to select an available bike at chosen station
+								System.out.println(
+										"Please enter the bikeID of a bike from the following lists of bikes available at station "
+												+ stationId);
+								System.out.println("Or type 'back' to return to menu.");
 								viewBikesAtStation(stationId);
-								
+
 								String input3 = userInput.nextLine();
 								if (input3.equalsIgnoreCase("back") || input3.equalsIgnoreCase("b")) {
 									System.out.println();
 									extracted();
 									return;
 								}
-								try {
-
+								try { // If chosen bike is available to use, set bikeID to that of the chosen bike
 									if (bikeNotInUse(input3)) {
 										bikeID = input3;
 										break;
-									} else {
+									} else { // Else prompt user to enter valid bikeID
 										System.out.println("No such bike exists. \nPlease enter valid bike ID.");
 									}
-								} catch (Exception e) { // check that input is a number
-									System.out.println("'" + input3 + "' is not an accepted bike ID. Please try again.");
+								} catch (Exception e) { // Check that input is a number
+									System.out
+											.println("'" + input3 + "' is not an accepted bike ID. Please try again.");
 								}
 							}
-							
-							
 							System.out.print('\n');
-							System.out.println(
-									"You rented out "+ bikeID+ " bike. Your account was charged.");
+							System.out.println("You rented out " + bikeID + " bike. Your account was charged.");
 							station.setPedelecs(station.getPeds() - 1); // Subtract one pedelec to station
 							station.setDocks(station.getAvDocs() + 1); // Add one available docks to station
+							saveStationList(); // Save changes to station-data.csv
 
+							// Get current time
 							DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
 							LocalDateTime startTime = LocalDateTime.now();
 							String time = dtf.format(startTime);
 
-							// Create a new ride_history obj
-							RideHistory obj = new RideHistory(user, bikeID, stationId, 0, time, "0",0);
-
+							// Create a new ride_history obj and add it to ride_history list
+							RideHistory obj = new RideHistory(user, bikeID, stationId, 0, time, "0", 0);
 							ride_history.add(obj);
+
+							saveRideHistory(); // Save changes to ride-history.csv
 							
-							saveRideHistory();
-							System.out.println("Updated 'ride-history.csv' file");
-							//makeBikeUnavilable(bikeID,currentUser.getID());
-							for(Bikes b: all_bikes) {
-								if(b.getbikeID().equals(bikeID)) {
-									b.setBikeStatus(1);
-									b.setUserID(currentUser.getID());
-									saveBikeLocation();
+							for (Bikes b : all_bikes) {	// loop through all_bikes
+								if (b.getbikeID().equals(bikeID)) { // Get bike that was just rented out, and set its status to in use
+									b.setBikeStatus(1);	// 1 = in-use; 0 = not in-use
+									b.setUserID(currentUser.getID());	// Update the userID of the user using the bike
+									saveBikeLocation(); // Save changes to bikeLocation-data.csv
 								}
 							}
-							System.out.println("Updated 'bikeLocation.csv' file");
 							break;
-						} else {
-							System.out.println("Invalid transaction. No bikes are available at this station.");
+						} else {	//If there's no availables bikes at station, ask user to use a different station
+							System.out.println("Invalid transaction. No bikes are available at this station. Please try again.");
 						}
 					}
 				}
@@ -1513,7 +1533,12 @@ public class ValleyBikeSim {
 
 	}
 
-// ******************************************************************************************************************
+
+	/**
+	 * Allow user to return bike given that: 
+	 * <p>(i) User is logged in<p> 
+	 * <p>(ii) There are available docks at user's current station<p>
+	 */
 	public static void returnBike() {
 		int user = currentUser.getID();
 		int stationId = -1;
@@ -1521,15 +1546,15 @@ public class ValleyBikeSim {
 		int end = 1;
 		// Create Scanner object
 		Scanner userInput1 = new Scanner(System.in);
+		
+		// If user has no-ride in progress then ask user to rent a bike before they can return
 		for (RideHistory r : ride_history) {
 			if (r.getUserID() == user) {
-				System.out.println(r.getEndTime());
-				if (!r.getEndTime().equals("0") && r.getCompletedRide()==0) {
+				if (!r.getEndTime().equals("0") && r.getCompletedRide() == 0) {
 					rideNotInProgress = 1;
 					// If ride is not in progress do not allow user to rent bike:
 					System.out.println(rideNotInProgress);
-					System.out
-							.println("You did not check out any bike. Please rent a bike before trying to return it.");
+					System.out.println("You did not check out any bike. Please rent a bike before trying to return it.");
 					end = 2;
 					break;
 
@@ -1539,6 +1564,7 @@ public class ValleyBikeSim {
 
 		}
 
+		// Get staion id of the station the user want to return bike to
 		while (stationId == -1) {
 			System.out.print("Please enter station ID at current location: ");
 			System.out.println("Type 'back' to return to menu.");
@@ -1549,27 +1575,22 @@ public class ValleyBikeSim {
 
 				System.out.println();
 				extracted();
-				//return;
+				 return;
 			}
 			try {
-
-				if (stationExists(Integer.parseInt(input1))) {
-
+				if (stationExists(Integer.parseInt(input1))) { // Check if such a station exists
 					stationId = Integer.parseInt(input1);
-
-				} else {
+				} else { // Else ask user to re-enter valid station ID
 					System.out.println("No such station exists. \nPlease enter valid station ID.");
 				}
-			} catch (Exception e) { // check that input is a number
+			} catch (Exception e) { // Check that input is a number
 				System.out.println("'" + input1 + "' is not an accepted Station ID. Please try again.");
 			}
 		}
-		// Check to see if user has an in-progress ride. If so, we are recording the end
-		// of a ride.
+		// Check to see if user has an in-progress ride. If so, we are recording the end of a ride.
 		if (rideNotInProgress == 0 && end == 1) {
-
 			for (RideHistory r : ride_history) {
-				if (r.getUserID() == currentUser.getID() && r.getCompletedRide()==0) {
+				if (r.getUserID() == currentUser.getID() && r.getCompletedRide() == 0) {
 					// Edit station and ride data
 
 					for (Station station : all_stations) {
@@ -1579,21 +1600,20 @@ public class ValleyBikeSim {
 
 								System.out.print('\n');
 								System.out.println("Thank you for riding. Please check your email for a recipt.");
-								station.setPedelecs(station.getPeds() + 1); // add one to pedelecs count
-								station.setDocks(station.getAvDocs() - 1); // subtract one from available docks
+								station.setPedelecs(station.getPeds() + 1); // Add one to pedelecs count
+								station.setDocks(station.getAvDocs() - 1); // Subtract one from available docks
+								saveStationList();
 								DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
 								LocalDateTime startTime = LocalDateTime.now();
 								String time = dtf.format(startTime);
 								r.setEnd(time);
 								r.setTo(stationId);
 								r.setCompletedRide(1);
-								viewRideHistory();
-								System.out.println("user = " + r.getUserID() + " dest station = " + r.getDestStation()
-										+ " endTime = " + r.getEndTime()+"ride completed = "+r.getCompletedRide());
+						
 								saveRideHistory();
-								System.out.println("saved");
-								for(Bikes b: all_bikes) {
-									if(b.getbikeID().equals(r.getBikeID())) {
+								
+								for (Bikes b : all_bikes) {	// Loop through all_bikes list to update bike stats
+									if (b.getbikeID().equals(r.getBikeID())) {
 										b.setBikeStatus(0);
 										b.setUserID(0);
 										b.setStation(stationId);
@@ -1603,8 +1623,7 @@ public class ValleyBikeSim {
 								break;
 
 							} else { // If there is no capacity
-								System.out
-										.println("No capacity here. Please park at another station. You can print the "
+								System.out.println("No capacity here. Please park at another station. You can print the "
 												+ "station list to see capacity.");
 							}
 
@@ -1834,7 +1853,7 @@ public class ValleyBikeSim {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		// Fill all_bikes
 		try {
 			BufferedReader csvReader = new BufferedReader(new FileReader("data-files/bikeLocation-data.csv"));
@@ -1857,9 +1876,9 @@ public class ValleyBikeSim {
 
 		String[] num01 = new String[] { "0", "1" }; // log in options
 		List<String> logInOptions = Arrays.asList(num01);
-		String choice;
+		String choice = "";
 
-		while (true) {
+		while (currentUser == null) {
 			System.out.println("[0] Log in.");
 			System.out.println("[1] Create account.");
 			choice = s.next();
@@ -1911,7 +1930,7 @@ public class ValleyBikeSim {
 				} else if (input.equals("4")) { // start ride
 					rentBike();
 
-				}  else if (input.equals("5")) { // end ride
+				} else if (input.equals("5")) { // end ride
 					returnBike();
 				} else if (input.equals("6")) { // view balance
 					System.out.println("Your balance is $" + currentUser.getBalance() + ".");
