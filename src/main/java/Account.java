@@ -1,4 +1,3 @@
-
 public class Account {
 	private int type; //whether the user is a user or an admin
 	private int id; //user's id
