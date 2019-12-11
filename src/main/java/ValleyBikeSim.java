@@ -1507,6 +1507,7 @@ public class ValleyBikeSim {
 					String b = a.toString();
 					try { // check that input is a number
 						int num = Integer.parseInt(b);
+						accepted = true;
 					} catch (Exception e) {
 						System.out.println("Please enter a valid card number.");
 						accepted = false;
@@ -1518,11 +1519,11 @@ public class ValleyBikeSim {
 			if (accepted == false) {
 				continue;
 			} else {
-
 				if (chance <= 9) {
 					System.out.println("Your payment has been accepted.");
 					int oldBal = currentUser.getBalance();
 					currentUser.setBalance(cost + oldBal);
+					saveAccountList();
 					return quit;
 				} else {
 					System.out.println("There was a problem proccessing your payment. Please try again.");
