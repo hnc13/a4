@@ -1696,7 +1696,7 @@ public class ValleyBikeSim {
 								System.out.println("Or type 'back' to return to menu.");
 								viewBikesAtStation(stationId);
 
-								String input3 = userInput.nextLine();
+								String input3 = userInput.nextLine().toUpperCase();
 								if (input3.equalsIgnoreCase("back") || input3.equalsIgnoreCase("b")) {
 									System.out.println();
 									extracted();
@@ -1782,7 +1782,7 @@ public class ValleyBikeSim {
 		}
 		for (RideHistory r : ride_history) {
 			if (r.getUserID() == user) {
-				if (!r.getEndTime().equals("0") && r.getCompletedRide() == 1) {
+				if (!r.getEndTime().equals("0") && r.getCompletedRide() == 0) {
 					rideNotInProgress = 1;
 					// If ride is not in progress do not allow user to rent bike:
 					System.out.println("You did not check out any bike. Please rent a bike before trying to return it.");
