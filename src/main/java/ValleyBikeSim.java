@@ -22,12 +22,14 @@ import java.text.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-// This program is based on code base 656 by Emma Tanur and Grace Bratzel. 
-// It creates a simulator for ValleyBike. The user can interact with the program to
-// The readMe.txt contains further documentation regarding the many functionalities provided to users,
-// and how to interact with the system.
-
-// Authors: Hannah, Jess, Mae, Nashshaba
+/**
+ * This program is based on code base 656 by Emma Tanur and Grace Bratzel. 
+ * - It creates a simulator for ValleyBike. The user can interact with the program to
+ * The readMe.txt contains further documentation regarding the many functionalities provided to use
+ *  and how to interact with the system.
+ *  
+ *  @author jessica, hannah, nashshaba, mae
+ */
 
 public class ValleyBikeSim {
 	// ***** Static Data Structures ****//
@@ -635,21 +637,23 @@ public class ValleyBikeSim {
 		int kioskNum = -1;
 		boolean kiosk = false;
 		while (kioskNum == -1) {
-			System.out.println("Number of kiosks: ");
+			System.out.println("Is there a kiosk? Y/N");
 			input = c.nextLine();
 			if (input.equalsIgnoreCase("back") || input.equalsIgnoreCase("b")) {
 				System.out.println();
 				extracted();
 				return;
-			}
-			try {
-				kioskNum = Integer.parseInt(input);
-			} catch (Exception e) { // check that input is a number
-				System.out.println("'" + input + "' is not an accepted number of kiosks. Please try again.");
-				System.out.println();
-			}
-			if (kioskNum > 0) {
+			} else if (input.equalsIgnoreCase("yes") || input.equalsIgnoreCase("y") || input.equalsIgnoreCase("true") 
+					|| input.equalsIgnoreCase("t")){
 				kiosk = true;
+				break;
+			} else if (input.equalsIgnoreCase("no") || input.equalsIgnoreCase("n") || input.equalsIgnoreCase("false") 
+					|| input.equalsIgnoreCase("f")){
+				kiosk = false;
+				break;
+			} else {
+				System.out.println("That is not an accepted input. Please try again.");
+				continue;
 			}
 		}
 
@@ -1210,7 +1214,6 @@ public class ValleyBikeSim {
 			final JPopupMenu popupmenu = new JPopupMenu("User");
 			JMenuItem viewStations = new JMenuItem("View Station List");
 			JMenuItem membership = new JMenuItem("Purchase/Change Membership");
-			JMenuItem cancelMem = new JMenuItem("Cancel Membership");
 			JMenuItem startRd = new JMenuItem("Start Ride");
 			JMenuItem endRd = new JMenuItem("End Ride");
 			JMenuItem viewHis = new JMenuItem("View your ride history");
@@ -1219,7 +1222,6 @@ public class ValleyBikeSim {
 			// adding items to the menu
 			popupmenu.add(viewStations);
 			popupmenu.add(membership);
-			popupmenu.add(cancelMem);
 			popupmenu.add(startRd);
 			popupmenu.add(endRd);
 			popupmenu.add(viewHis);
@@ -1242,12 +1244,6 @@ public class ValleyBikeSim {
 					// itemSelected.setText("Follows steps in console to purchase/change
 					// membership.");
 					buyMem();
-				}
-			});
-			cancelMem.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					// itemSelected.setText("Follow steps in console to cancel membership.");
-					cancelMem();
 				}
 			});
 			startRd.addActionListener(new ActionListener() {
@@ -1379,29 +1375,28 @@ public class ValleyBikeSim {
 	}
 
 	/**
-	 * Allows the user to purchase a membership.
+	 * Allows the user to purchase or cancel a membership.
 	 */
 	public static void buyMem() {
 		int mem = 0;
 		String choice = "-1";
-		String[] num = new String[] { "1", "2", "3" }; // membership options
+		String[] num = new String[] {"0", "1", "2", "3" }; // membership options
 		List<String> memOptions = Arrays.asList(num);
 
-		String[] mems = new String[] { "Founding Member", "Annual", "Monthly" }; // membership types
+		String[] mems = new String[] { "none", "Founding Member", "Annual", "Monthly" }; // membership types
 		List<String> memsOptions = Arrays.asList(mems);
 
-		String[] costs = new String[] { "90", "80", "20" }; // membership costs
+		String[] costs = new String[] { "0", "90", "80", "20" }; // membership costs
 		List<String> costOptions = Arrays.asList(costs);
 
-		if (currentUser.getMembership() != 0) {
-			System.out.println("Your current membership is: " + memsOptions.get(currentUser.getMembership() - 1) + ".");
-		}
+		System.out.println("\nYour current membership is: " + memsOptions.get(currentUser.getMembership()) + ".");
 
 		System.out.println("We have 3 membership options available.");
 
 		Scanner s = new Scanner(System.in); // Create a Scanner object
 		while (true) {
 			System.out.println("Please select a membership");
+			System.out.println("[0]Cancel Membership.");
 			System.out.println("[1]Founding Member: $90 annually. The first 60 minutes of each ride are included.");
 			System.out.println("[2]Annual Membership: $80 annually. The first 45 minutes of each ride are included.");
 			System.out.println("[3]Monthly Membership: $20 monthly. The first 45 minutes of each ride are included.");
@@ -1420,18 +1415,30 @@ public class ValleyBikeSim {
 					System.out.println("\nThat is your current membership.\n");
 					continue;
 				}
-				System.out.println("You have selected the " + memsOptions.get(Integer.parseInt(choice) - 1)
-						+ " membership. Are you sure? Y/N");
+				if (mem == 0) {
+					System.out.println("Are you sure you want to cancel your membership? Y/N");
+				} else {
+					System.out.println("You have selected the " + memsOptions.get(Integer.parseInt(choice))
+					+ " membership. Are you sure? Y/N");
+				}
+				
 				Scanner c = new Scanner(System.in); // Create a Scanner object
 				String input = c.next();
 				if (input.equalsIgnoreCase("y") || input.equalsIgnoreCase("yes")) {
-					int cost = Integer.parseInt(costOptions.get(Integer.parseInt(choice) - 1));
-					boolean quit = payment(cost);
-					if (quit) {
-						continue;
+					if (mem == 0) {
+						currentUser.setMembership(0);
+						System.out.println("Your membership has been canceled.");
+						break;
+					} else {
+						int cost = Integer.parseInt(costOptions.get(Integer.parseInt(choice)));
+						boolean quit = payment(cost);
+						if (quit) {
+							continue;
+						}
+						currentUser.setMembership(Integer.parseInt(choice) - 1);
+						break;
 					}
-					currentUser.setMembership(Integer.parseInt(choice) - 1);
-					break;
+					
 				} else if (input.equalsIgnoreCase("n") || input.equalsIgnoreCase("no")) {
 					continue;
 				} else {
@@ -1451,49 +1458,12 @@ public class ValleyBikeSim {
 			}
 		}
 		saveAccountList();
-		System.out.println("Congratulations! You now have a ValleyBike " + memsOptions.get(Integer.parseInt(choice) - 1)
-				+ " membership!");
-	}
-
-	/**
-	 * Allow user to cancel their membership.
-	 */
-	public static void cancelMem() {
-		String[] mems = new String[] { "Founding Member", "Annual", "Monthly" }; // Membership types
-		List<String> memsOptions = Arrays.asList(mems);
-
-		while (true) {
-			if (currentUser.getMembership() == 0) {
-				System.out.println("You don't have a membership to cancel!");
-				return;
-			}
-			if (currentUser.getMembership() != 0) {
-				System.out.println(
-						"Your current membership is: " + memsOptions.get(currentUser.getMembership() - 1) + ".");
-				System.out.println("Are you sure you want to cancel your membership? Y/N");
-				Scanner c = new Scanner(System.in); // Create a Scanner object
-				String input = c.next();
-				if (input.equalsIgnoreCase("back") || input.equalsIgnoreCase("b")) {
-					c.close();
-					System.out.println();
-					extracted();
-					return;
-				}
-				if (input.equalsIgnoreCase("y") || input.equalsIgnoreCase("yes")) {
-					c.close();
-					currentUser.setMembership(0);
-					System.out.println("\nYour membership has been canceled.\n");
-					return;
-				} else if (input.equalsIgnoreCase("n") || input.equalsIgnoreCase("no")) {
-					c.close();
-					return;
-				}
-				c.close();
-			}
-
+		if (mem != 0) {
+			System.out.println("Congratulations! You now have a ValleyBike " + memsOptions.get(Integer.parseInt(choice))
+			+ " membership!");
 		}
-
 	}
+
 
 	/**
 	 * Allow user to make a payment.
@@ -1527,7 +1497,9 @@ public class ValleyBikeSim {
 					String b = a.toString();
 					try { // check that input is a number
 						int num = Integer.parseInt(b);
+
 						accepted=true;
+
 					} catch (Exception e) {
 						System.out.println("Please enter a valid card number.");
 						accepted = false;
@@ -1539,11 +1511,11 @@ public class ValleyBikeSim {
 			if (accepted == false) {
 				continue;
 			} else {
-
 				if (chance <= 9) {
 					System.out.println("Your payment has been accepted.");
 					int oldBal = currentUser.getBalance();
 					currentUser.setBalance(cost + oldBal);
+					saveAccountList();
 					return quit;
 				} else {
 					System.out.println("There was a problem proccessing your payment. Please try again.");
@@ -2210,15 +2182,15 @@ public class ValleyBikeSim {
 						System.out.println("Welcome to ValleyBike, user " + currentUser.getID() + ".");
 						welcome = true;
 					}
-					String[] num = new String[] { "0", "1", "2", "3", "4", "5", "6", "7" }; // menu options
+					String[] num = new String[] { "0", "1", "2", "3", "4", "5", "6" }; // menu options
 					List<String> menuOptions = Arrays.asList(num);
 					String input;
 
 					Scanner c = new Scanner(System.in); // Create a Scanner object
 					System.out.println("Please choose from one of the following menu options:");
 					String[] options = new String[] { "[0] Quit Program.", "[1] View station list.",
-							"[2] Purchase/Change Membership.", "[3] Cancel Membership.", "[4] Start ride.",
-							"[5] End ride.", "View total money spent on ValleyBike.", "[7] View your ride history." };
+							"[2] Purchase/Change Membership.", "[3] Start ride.",
+							"[4] End ride.", "[5] View total money spent on ValleyBike.", "[6] View your ride history." };
 					while (true) {
 						for (int i = 0; i < options.length; i++) {
 							System.out.println(options[i]);
@@ -2235,16 +2207,14 @@ public class ValleyBikeSim {
 						viewStationList();
 					} else if (input.equals("2")) { // purchase/change membership
 						buyMem();
-					} else if (input.equals("3")) { // cancel membership
-						cancelMem();
-					} else if (input.equals("4")) { // start ride
+					} else if (input.equals("3")) { // start ride
 						rentBike();
 
-					} else if (input.equals("5")) { // end ride
+					} else if (input.equals("4")) { // end ride
 						returnBike();
-					} else if (input.equals("6")) { // view balance (meaning total money spent on ValleyBike)
+					} else if (input.equals("5")) { // view balance (meaning total money spent on ValleyBike)
 						System.out.println("You have spent $" + currentUser.getBalance() + ".");
-					} else if (input.equals("7")) { // view user's ride history
+					} else if (input.equals("6")) { // view user's ride history
 						userHistory();
 					}
 
