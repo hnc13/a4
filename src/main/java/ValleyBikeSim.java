@@ -174,6 +174,24 @@ public class ValleyBikeSim {
 		System.out.println();
 		System.out.println();
 	}
+	
+	/**
+	 * Checks whether there are any individual bikes at station
+	 * 
+	 * @param stationID - ID of the station user wants to rent a bike from.
+	 * @return true if station has no bikes
+	 */
+	public static boolean stationHasBikes(int stationID) {
+		
+		for (Bikes b : all_bikes) {
+			if (b.getStation() == stationID) {
+				return false;
+				
+			}
+		}
+		return true;
+
+	}
 
 	/**
 	 * Print all available bikes at a particular station.
@@ -182,6 +200,7 @@ public class ValleyBikeSim {
 	 */
 	public static void viewBikesAtStation(int stationID) {
 		String bikeID;
+		boolean print = false;
 		for (Bikes b : all_bikes) {
 			if (b.getStation() == stationID && b.getBikeStatus() != 1) {
 				bikeID = b.getbikeID();
@@ -189,6 +208,7 @@ public class ValleyBikeSim {
 				System.out.println();
 			}
 		}
+		
 
 	}
 //-----------------------------------------------------------------------------------------------------------------//	
@@ -1393,7 +1413,7 @@ public class ValleyBikeSim {
 			System.out.println("[3]Monthly Membership: $20 monthly. The first 45 minutes of each ride are included.");
 			System.out.println("Type 'back' to return to menu.");
 
-			choice = s.nextLine().strip();
+			choice = s.nextLine();
 
 			if (choice.equalsIgnoreCase("back") || choice.equalsIgnoreCase("b")) {
 				System.out.println();
@@ -1488,7 +1508,9 @@ public class ValleyBikeSim {
 					String b = a.toString();
 					try { // check that input is a number
 						int num = Integer.parseInt(b);
-						accepted = true;
+
+						accepted=true;
+
 					} catch (Exception e) {
 						System.out.println("Please enter a valid card number.");
 						accepted = false;
@@ -1670,8 +1692,16 @@ public class ValleyBikeSim {
 				System.out.println("'" + input + "' is not an accepted Station ID. Please try again.");
 			}
 		}
+		
+		
 
 		if (end == 1 && stationId != -1) {
+			if(stationHasBikes(stationId)) {
+				System.out.println("Station "+stationId+ " has no bikes.");
+				System.out.println("Click on applet and select 'Start Ride' again.");
+				extracted();
+				return;
+			}
 			if (rideNotInProgress == 1) { // If user has no rides in progress, allow user to rent bike
 				// Iterate through stations to find current station data
 				for (Station station : all_stations) {
@@ -2009,7 +2039,6 @@ public class ValleyBikeSim {
 				try {
 					logIn();
 				} catch (ParseException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 
