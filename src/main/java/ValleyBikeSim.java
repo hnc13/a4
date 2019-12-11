@@ -22,12 +22,14 @@ import java.text.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-// This program is based on code base 656 by Emma Tanur and Grace Bratzel. 
-// It creates a simulator for ValleyBike. The user can interact with the program to
-// The readMe.txt contains further documentation regarding the many functionalities provided to users,
-// and how to interact with the system.
-
-// Authors: Hannah, Jess, Mae, Nashshaba
+/**
+ * This program is based on code base 656 by Emma Tanur and Grace Bratzel. 
+ * - It creates a simulator for ValleyBike. The user can interact with the program to
+ * The readMe.txt contains further documentation regarding the many functionalities provided to use
+ *  and how to interact with the system.
+ *  
+ *  @author jessica, hannah, nashshaba, mae
+ */
 
 public class ValleyBikeSim {
 	// ***** Static Data Structures ****//

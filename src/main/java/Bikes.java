@@ -1,4 +1,9 @@
-
+/**
+ * Blueprint for Bike object
+ * It sets & gets all attributes relating to each pedelec bike in the 
+ * valley bike system, including its ID and location
+ * @author jessicahernandez
+ */
 public class Bikes {
 	private String pedID;
 	private int station; 
