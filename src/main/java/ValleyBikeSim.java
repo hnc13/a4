@@ -617,21 +617,23 @@ public class ValleyBikeSim {
 		int kioskNum = -1;
 		boolean kiosk = false;
 		while (kioskNum == -1) {
-			System.out.println("Number of kiosks: ");
+			System.out.println("Is there a kiosk? Y/N");
 			input = c.nextLine();
 			if (input.equalsIgnoreCase("back") || input.equalsIgnoreCase("b")) {
 				System.out.println();
 				extracted();
 				return;
-			}
-			try {
-				kioskNum = Integer.parseInt(input);
-			} catch (Exception e) { // check that input is a number
-				System.out.println("'" + input + "' is not an accepted number of kiosks. Please try again.");
-				System.out.println();
-			}
-			if (kioskNum > 0) {
+			} else if (input.equalsIgnoreCase("yes") || input.equalsIgnoreCase("y") || input.equalsIgnoreCase("true") 
+					|| input.equalsIgnoreCase("t")){
 				kiosk = true;
+				break;
+			} else if (input.equalsIgnoreCase("no") || input.equalsIgnoreCase("n") || input.equalsIgnoreCase("false") 
+					|| input.equalsIgnoreCase("f")){
+				kiosk = false;
+				break;
+			} else {
+				System.out.println("That is not an accepted input. Please try again.");
+				continue;
 			}
 		}
 
