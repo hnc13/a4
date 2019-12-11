@@ -1,3 +1,12 @@
+/**
+ * Blueprint for Accounts object.
+ * Manages attributes relating to the account object including:
+ * (I)User ID,
+ * (II)Password,
+ * (III) Membership, and 
+ * (IV) Balance information.
+ *
+ */
 public class Account {
 	private int type; //whether the user is a user or an admin
 	private int id; //user's id
