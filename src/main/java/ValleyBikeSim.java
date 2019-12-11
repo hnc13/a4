@@ -1377,11 +1377,7 @@ public class ValleyBikeSim {
 			System.out.println("[3]Monthly Membership: $20 monthly. The first 45 minutes of each ride are included.");
 			System.out.println("Type 'back' to return to menu.");
 
-			choice = s.next();
-			System.out.println(choice);
-			choice = s.nextLine();
-			// TODO: replaceabove line with below line
-			// choice = s.nextLine().strip();
+			choice = s.nextLine().strip();
 
 			if (choice.equalsIgnoreCase("back") || choice.equalsIgnoreCase("b")) {
 				System.out.println();
@@ -1659,7 +1655,6 @@ public class ValleyBikeSim {
 
 		// If user does not have a ride in progress, prompt the user to enter stationID
 		while (stationId == -1 && end ==1) {
-			System.out.println("First press enter and then either ");
 			System.out.print("(i) Enter station ID at current location; Or ");
 			System.out.println("\n(ii) Type 'back' to return to menu.");
 			String input = userInput.nextLine();
