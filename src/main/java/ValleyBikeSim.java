@@ -1715,7 +1715,12 @@ public class ValleyBikeSim {
 								}
 							}
 							System.out.print('\n');
-							System.out.println("You rented out " + bikeID + " bike. Your account was charged.");
+							if (currentUser.getMembership() == 0) {
+								payment(6);
+							} else if (currentUser.getMembership() < 4 && currentUser.getMembership() > 0) {
+								System.out.println("Your membership covers the cost of this ride.");
+							}
+							System.out.println("You rented out " + bikeID + " bike.");
 							station.setPedelecs(station.getPeds() - 1); // Subtract one pedelec to station
 							station.setDocks(station.getAvDocs() + 1); // Add one available docks to station
 							saveStationList(); // Save changes to station-data.csv
