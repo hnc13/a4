@@ -1303,14 +1303,12 @@ public class ValleyBikeSim {
 			JMenuItem saveStations = new JMenuItem("Save Station List");
 			JMenuItem equalStations = new JMenuItem("Equalize Stations");
 			JMenuItem trackBikes = new JMenuItem("Track Bikes");
-			JMenuItem resolveRides = new JMenuItem("Resolve Ride Data");
 			// adding items to the menu
 			popupmenu.add(viewStations);
 			popupmenu.add(addStation);
 			popupmenu.add(saveStations);
 			popupmenu.add(equalStations);
 			popupmenu.add(trackBikes);
-			popupmenu.add(resolveRides);
 
 			// creating event listeners for menu items
 			menuPanel.addMouseListener(new MouseAdapter() {
@@ -1347,16 +1345,6 @@ public class ValleyBikeSim {
 					// itemSelected.setText("Track a bike MenuItem clicked.");
 					// inConsole();
 					trackBikes();
-				}
-			});
-			resolveRides.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					// itemSelected.setText("Rides summarized. View summary in console.");
-					try {
-						resolveRideData();
-					} catch (ParseException e1) {
-						e1.printStackTrace();
-					}
 				}
 			});
 
