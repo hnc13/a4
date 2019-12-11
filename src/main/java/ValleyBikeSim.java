@@ -1743,7 +1743,8 @@ public class ValleyBikeSim {
 						} else { // If there's no availables bikes at station, ask user to use a different
 									// station
 							System.out.println(
-									"Invalid transaction. No bikes are available at this station. Please try again.");
+									"Invalid transaction. No bikes are available at this station.");
+							System.out.println("Click on the applet window and select 'Start Ride' to to try again.");
 						}
 					}
 				}
@@ -1848,6 +1849,7 @@ public class ValleyBikeSim {
 							} else { // If there is no capacity
 								System.out.println("No capacity here. Please park at another station. You can print the "
 												+ "station list to see capacity.");
+								System.out.println("Click on the applet window and select 'Start Ride' to restart.");
 							}
 
 						}
