@@ -1141,12 +1141,17 @@ public class ValleyBikeSim {
 			JMenuItem cancelMem = new JMenuItem("Cancel Membership");
 			JMenuItem startRd = new JMenuItem("Start Ride");
 			JMenuItem endRd = new JMenuItem("End Ride");
+			JMenuItem viewHis = new JMenuItem("View your ride history");
+			JMenuItem viewBal = new JMenuItem("View total money spent with ValleyBike");
+			
 			// adding items to the menu
 			popupmenu.add(viewStations);
 			popupmenu.add(membership);
 			popupmenu.add(cancelMem);
 			popupmenu.add(startRd);
 			popupmenu.add(endRd);
+			popupmenu.add(viewHis);
+			popupmenu.add(viewBal);
 
 			// creating event listeners for menu items
 			menuPanel.addMouseListener(new MouseAdapter() {
@@ -1186,6 +1191,22 @@ public class ValleyBikeSim {
 					itemSelected.setText("End Ride MenuItem clicked.");
 					inConsole();
 					returnBike();
+				}
+			});
+			
+			viewHis.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					itemSelected.setText("Ride History MenuItem clicked.");
+					inConsole();
+					userHistory();
+				}
+			});
+			
+			viewBal.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					itemSelected.setText("Balance MenuItem clicked.");
+					inConsole();
+					System.out.println("You have spent $" + currentUser.getBalance() + " with ValleyBike.");
 				}
 			});
 
@@ -1794,6 +1815,28 @@ public class ValleyBikeSim {
 		}
 	}
 	
+	/**
+	 * Allows user to view their personal ride history.
+	 */
+	public static void userHistory() {
+		int id = currentUser.getID();
+		List<RideHistory> userRides = new ArrayList<>();
+		for (RideHistory r : ride_history) {
+			if (r.getUserID() == id) {
+				userRides.add(r);
+			}
+		}
+		
+		if (!userRides.isEmpty()) {
+			System.out.println("Here is your ride history:");
+			for (RideHistory r : userRides) {
+				System.out.println("Bike ID: " + r.getBikeID() + ". Start time: " + r.getStartTime() + ". Start station: " 
+			+ r.getStartStation() + ". End time : " + r.getEndTime() + ". End station: " + r.getDestStation());
+			}
+		} else {
+			System.out.println("You don't have any ride history!");
+		}
+	}
 	
 	/**
 	 * Helper function to display a request in GUI to 
@@ -2072,7 +2115,7 @@ public class ValleyBikeSim {
 					System.out.println("Welcome to ValleyBike, user " + currentUser.getID() + ".");
 					welcome = true;
 				}
-				String[] num = new String[] { "0", "1", "2", "3", "4", "5", "6" }; // menu options
+				String[] num = new String[] { "0", "1", "2", "3", "4", "5", "6", "7" }; // menu options
 				List<String> menuOptions = Arrays.asList(num);
 				String input;
 
@@ -2080,7 +2123,7 @@ public class ValleyBikeSim {
 				System.out.println("Please choose from one of the following menu options:");
 				String[] options = new String[] { "[0] Quit Program.", "[1] View station list.",
 						"[2] Purchase/Change Membership.", "[3] Cancel Membership.", "[4] Start ride.",
-						"[5] End ride." };
+						"[5] End ride.", "View total money spent on ValleyBike.", "[7] View your ride history." };
 				while (true) {
 					for (int i = 0; i < options.length; i++) {
 						System.out.println(options[i]);
@@ -2104,13 +2147,12 @@ public class ValleyBikeSim {
 
 				} else if (input.equals("5")) { // end ride
 					returnBike();
-				} else if (input.equals("6")) { // view balance
-					System.out.println("Your balance is $" + currentUser.getBalance() + ".");
-
+				} else if (input.equals("6")) { // view balance (meaning total money spent on ValleyBike)
+					System.out.println("You have spent $" + currentUser.getBalance() + ".");
 				}
-//				else if (input.equals("5")) { // view balance
-//					System.out.println("Your balance is $" + currentUser.getBalance() + ".");
-//				}
+				else if (input.equals("7")) { // view user's ride history
+					userHistory();
+				}
 
 			}
 		}
