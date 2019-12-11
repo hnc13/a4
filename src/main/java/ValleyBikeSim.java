@@ -1300,18 +1300,18 @@ public class ValleyBikeSim {
 	}
 
 	/**
-	 * Allow user to purchase a membership.
+	 * Allows the user to purchase a membership.
 	 */
 	public static void buyMem() {
 		int mem = 0;
-		String choice;
-		String[] num = new String[] { "1", "2", "3" }; // Membership options
+		String choice = "-1";
+		String[] num = new String[] { "1", "2", "3" }; // membership options
 		List<String> memOptions = Arrays.asList(num);
 
 		String[] mems = new String[] { "Founding Member", "Annual", "Monthly" }; // membership types
 		List<String> memsOptions = Arrays.asList(mems);
 
-		String[] costs = new String[] { "90", "80", "20" }; // Membership costs
+		String[] costs = new String[] { "90", "80", "20" }; // membership costs
 		List<String> costOptions = Arrays.asList(costs);
 
 		if (currentUser.getMembership() != 0) {
@@ -1327,7 +1327,8 @@ public class ValleyBikeSim {
 			System.out.println("[2]Annual Membership: $80 annually. The first 45 minutes of each ride are included.");
 			System.out.println("[3]Monthly Membership: $20 monthly. The first 45 minutes of each ride are included.");
 			System.out.println("Type 'back' to return to menu.");
-			choice = s.next();
+			choice = s.nextLine().strip();
+			
 			if (choice.equalsIgnoreCase("back") || choice.equalsIgnoreCase("b")) {
 				System.out.println();
 				extracted();
@@ -1344,25 +1345,28 @@ public class ValleyBikeSim {
 				Scanner c = new Scanner(System.in); // Create a Scanner object
 				String input = c.next();
 				if (input.equalsIgnoreCase("y") || input.equalsIgnoreCase("yes")) {
+					int cost = Integer.parseInt(costOptions.get(Integer.parseInt(choice) - 1));
+					boolean quit = payment(cost);
+					if (quit) {
+						continue;
+					}
 					currentUser.setMembership(Integer.parseInt(choice) - 1);
 					break;
 				} else if (input.equalsIgnoreCase("n") || input.equalsIgnoreCase("no")) {
 					continue;
+				} else {
+					System.out.println("That input is incorrect. Please try again.");
+					continue;
 				}
-			}
+			} 
 			System.out.println("That input is incorrect. Please try again.");
-		}
-
-		
-		
-		
+			continue;
+		}	
 		for (Account a : all_accounts) {
 			if (a == currentUser) {
 				a.setMembership(mem);
 			}
 		}
-		int cost = Integer.parseInt(costOptions.get(Integer.parseInt(choice) - 1));
-		payment(cost);
 		saveAccountList();
 		System.out.println("Congratulations! You now have a ValleyBike " + memsOptions.get(Integer.parseInt(choice) - 1)
 				+ " membership!");
@@ -1412,7 +1416,9 @@ public class ValleyBikeSim {
 	 * Allow user to make a payment.
 	 * @param cost - Cost of ride
 	 */
-	public static void payment(int cost) {
+	public static boolean payment(int cost) {
+		boolean accepted = true;
+		boolean quit = false;
 		Random rand = new Random();
 		int chance = rand.nextInt(9);
 		Scanner s = new Scanner(System.in); // Create a Scanner object
@@ -1420,19 +1426,46 @@ public class ValleyBikeSim {
 		System.out.println("Your total is $" + cost + ".");
 		while (true) {
 			System.out.println("Please enter your credit/debit card number: ");
-			input = s.next();
+			input = s.nextLine().replace(" ", "").replace("-", "");
+			
+			if (input.equalsIgnoreCase("back") || input.equalsIgnoreCase("b")) {
+				System.out.println();
+				quit = true;
+				return quit;
+			}
+			
+			if (input.length() != 16) {
+				System.out.println("Please enter a valid card number.");
+				accepted = false;
+				continue;
+			} else if (input.length() == 16) {
+				for (Character a : input.toCharArray()) {
+					String b = a.toString();
+					try { // check that input is a number
+						int num = Integer.parseInt(b);
+					} catch (Exception e) {
+						System.out.println("Please enter a valid card number.");
+						accepted = false;
+						break;
+					}
+					}
+				} 
+			
+			if (accepted == false) {
+				continue;
+			} else {
 
 			if (chance <= 9) {
 				System.out.println("Your payment has been accepted.");
 				int oldBal = currentUser.getBalance();
 				currentUser.setBalance(cost + oldBal);
-				break;
+				return quit;
 			} else {
 				System.out.println("There was a problem proccessing your payment. Please try again.");
 				continue;
 			}
 		}
-
+		}
 	}
 
 	/**
