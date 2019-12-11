@@ -1246,34 +1246,27 @@ public class ValleyBikeSim {
 			});
 			viewStations.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					// itemSelected.setText("View Station List in console.");
 					viewStationList();
 				}
 			});
 			membership.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					// itemSelected.setText("Follows steps in console to purchase/change
-					// membership.");
 					buyMem();
 				}
 			});
 			startRd.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					// itemSelected.setText("Follow steps in console to start ride.");
 					rentBike();
 				}
 			});
 			endRd.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					// itemSelected.setText("Follow steps in console to end ride.");
 					returnBike();
 				}
 			});
 
 			viewHis.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					// itemSelected.setText("Ride History MenuItem clicked.");
-					// inConsole();
 					userHistory();
 				}
 			});
@@ -1281,7 +1274,6 @@ public class ValleyBikeSim {
 			viewBal.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					itemSelected.setText("Balance MenuItem clicked.");
-					// inConsole();
 					System.out.println("You have spent $" + currentUser.getBalance() + " with ValleyBike.");
 				}
 			});
@@ -1303,6 +1295,7 @@ public class ValleyBikeSim {
 			JMenuItem saveStations = new JMenuItem("Save Station List");
 			JMenuItem equalStations = new JMenuItem("Equalize Stations");
 			JMenuItem trackBikes = new JMenuItem("Track Bikes");
+			
 			// adding items to the menu
 			popupmenu.add(viewStations);
 			popupmenu.add(addStation);
@@ -1318,32 +1311,26 @@ public class ValleyBikeSim {
 			});
 			viewStations.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					// itemSelected.setText("View Station List in console.");
 					viewStationList();
 				}
 			});
 			addStation.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					// itemSelected.setText("Follow steps in console to add station.");
 					userAddStation();
 				}
 			});
 			saveStations.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					// itemSelected.setText("Station list saved.");
 					saveStationList();
 				}
 			});
 			equalStations.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					// itemSelected.setText("Stations equalized. Check console for updated list.");
 					equalizeStations();
 				}
 			});
 			trackBikes.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					// itemSelected.setText("Track a bike MenuItem clicked.");
-					// inConsole();
 					trackBikes();
 				}
 			});
@@ -1351,7 +1338,6 @@ public class ValleyBikeSim {
 			// add elements to panel
 			menuPanel.add(menuType);
 			menuPanel.add(popupmenu);
-			// menuPanel.add(itemSelected);
 
 			// add elements to panel
 			menuPanel.add(menuType);
