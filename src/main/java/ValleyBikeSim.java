@@ -506,6 +506,10 @@ public class ValleyBikeSim {
 				System.out.println();
 				extracted();
 				return;
+			} else if (name.isBlank()) {
+				System.out.println("You must enter a name.");
+				name = null;
+				continue;
 			}
 			for (Station s : all_stations) { // check that name is unique
 				if (name.equals(s.getName())) {
@@ -542,17 +546,17 @@ public class ValleyBikeSim {
 		String maintainenceString = null;
 		int maintainence = -1;
 		while (maintainenceString == null) {
-			System.out.println("Does this station require maintenance? (yes/no): ");
-			maintainenceString = c.nextLine();
+			System.out.println("Does this station require maintenance? Y/N: ");
+			maintainenceString = c.nextLine().strip();
 			if (maintainenceString.equalsIgnoreCase("back") || maintainenceString.equalsIgnoreCase("b")) {
 				System.out.println();
 				extracted();
 				return;
-			} else if ((maintainenceString.equals("yes")) || (maintainenceString.equals("Yes"))) { // check that input
+			} else if ((maintainenceString.equalsIgnoreCase("yes")) || (maintainenceString.equalsIgnoreCase("y"))) { // check that input
 																									// is either 'yes'
 																									// or 'no'
 				maintainence = 1;
-			} else if ((maintainenceString.equals("no")) || (maintainenceString.equals("No"))) {
+			} else if ((maintainenceString.equalsIgnoreCase("no")) || (maintainenceString.equalsIgnoreCase("n"))) {
 				maintainence = 0;
 			} else {
 				System.out.println(
@@ -585,6 +589,9 @@ public class ValleyBikeSim {
 								+ (bikes + pedelecs) + "). Please try again.");
 				System.out.println();
 				capacity = -1;
+			} else if (capacity == 0) {
+				System.out.println("The capacity of the station must be greater than 0. Please try again.");
+				capacity = -1;
 			}
 		}
 
@@ -597,6 +604,10 @@ public class ValleyBikeSim {
 				System.out.println();
 				extracted();
 				return;
+			} else if (address.isBlank()) {
+				System.out.println("You must input an address. Please try again.");
+				address = null;
+				continue;
 			}
 			for (Station s : all_stations) { // check that address is unique
 				if (address.equals(s.getAddress())) {
