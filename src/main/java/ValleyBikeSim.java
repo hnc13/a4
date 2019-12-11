@@ -1463,6 +1463,7 @@ public class ValleyBikeSim {
 					c.close();
 					currentUser.setMembership(0);
 					System.out.println("\nYour membership has been canceled.\n");
+					saveAccountList();
 					return;
 				} else if (input.equalsIgnoreCase("n") || input.equalsIgnoreCase("no")) {
 					c.close();
