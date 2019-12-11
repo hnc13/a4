@@ -259,6 +259,27 @@ public class ValleyBikeSim {
 		}
 		return false;
 	}
+	
+	/**
+
+	 * Does bikeID with passed bike ID already exist?
+
+	 * 
+
+	 * @param id - ID of a bike
+
+	 * @return true if such a bike exists or false if no such bike exists
+
+	 */
+	public static boolean bikeExists(String id) {
+		for (Bikes b : all_bikes) {
+			if (b.getbikeID().equals(id)) {
+				return true;
+			}
+		}
+		return false;
+
+	}
 
 	/**
 	 * Is a given bike available to rent/use?
@@ -1577,48 +1598,44 @@ public class ValleyBikeSim {
 
 	public static void trackBikes() {
 		String bikeID;
-		String missingBike; // Bike we are searching for
+		String response; // Bike we are searching for
 		int bikeLocation; // Where the bike is located (at a station or with a user)
 		Scanner adminInput = new Scanner(System.in);
-		System.out.print("Please enter the bike ID of the pedelec bike you are searching for.");
-		System.out.println("Type 'back' to return to menu.");
-		missingBike = adminInput.nextLine();
-		if (missingBike.equalsIgnoreCase("back") || missingBike.equalsIgnoreCase("b")) {
-			adminInput.close();
-			System.out.println();
-			extracted();
-			return;
-		}
-		for (Bikes b : all_bikes) {
-			if (b.getbikeID() == missingBike && b.getBikeStatus() != 1) {
-				bikeID = b.getbikeID();
-				bikeLocation = b.getStation();
-				System.out.print("Bike: " + bikeID + "is at Station: " + bikeLocation);
+		
+		while (true) { // make sure the bike ID is valid
+			//Prompt administrator for valid bike ID
+			System.out.println("Please enter the bike ID of the pedelec bike you are searching for.");
+			System.out.println("Type 'back' to return to menu.");
+			response = adminInput.nextLine().toUpperCase();
+			if (response.equalsIgnoreCase("back") || response.equalsIgnoreCase("b")) {
 				System.out.println();
+				extracted();
+				return;
+			}
+			if (bikeExists(response)) {
+				bikeID = response;
 				break;
-			} else if (b.getBikeStatus() == 1) {
-				bikeLocation = b.getUser();
-				bikeID = b.getbikeID();
-				System.out.print("Bike: " + bikeID + " is currently checked out by User: " + bikeLocation + ". ");
-				break;
-
+			} else {
+			System.out.print("Invalid input. ");
+			continue;
 			}
 		}
-		adminInput.close();
-		String adminDec;
-		System.out.print("Do you want to search for another bike? y/n?");
-		Scanner adminRes = new Scanner(System.in);
-		adminDec = adminRes.nextLine();
-		if (adminDec.equalsIgnoreCase("yes") || adminDec.equalsIgnoreCase("y")) {
-			adminRes.close();
-			trackBikes();
-		} else if (adminDec.equalsIgnoreCase("no") || adminDec.equalsIgnoreCase("n")) {
-			adminRes.close();
-			System.out.println();
-			extracted();
-			return;
+		for (Bikes b : all_bikes) {
+			if (b.getbikeID().equals(bikeID) && b.getBikeStatus() != 1) { //Bike we're looking for is not checked out
+				bikeLocation = b.getStation();
+				System.out.print("Bike: " + bikeID + " is at Station: " + bikeLocation);
+				System.out.println();
+				System.out.println("Please click on the Java applet window to continue.");
+				break;
+			} else if (b.getbikeID().equals(bikeID) && b.getBikeStatus() == 1) { //Bike we are looking for is checked out
+				bikeLocation = b.getUser();
+				System.out.print("Bike: " + bikeID + " is currently checked out by User: " + bikeLocation + ". ");
+				System.out.println();
+				System.out.println("Please click on the Java applet window to continue.");
+				break;
+				}
+			}
 		}
-	}
 // -----------------------------------------------------------------------------------------------------------------//
 	// **RIDE HISTORY**
 

@@ -1,5 +1,5 @@
 Type (0 for user and 1 for admin),ID,Password,Membership(0 for none/1 for Founding Member/2 for yearly membership/ 3 for monthly membership,Balance
-0,6230,password,1,470
+0,6230,password,3,490
 0,2294,blahblah,0,0
 1,5468,adminpass,0,0
 1,1313,iluvcats13,0,0
