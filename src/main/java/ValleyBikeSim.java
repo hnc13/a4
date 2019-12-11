@@ -319,6 +319,21 @@ public class ValleyBikeSim {
 		}
 		return total;
 	}
+	
+	/**
+	 * Does user have no rides?
+	 * 
+	 * @param userId - ID of user
+	 * @return true if user never started a ride
+	 */
+	public static boolean noUserRide(int userID) {
+		for (RideHistory r : ride_history) {
+			if (r.getUserID() == userID) {
+				return false;
+			}
+		}
+		return true;
+	}
 
 //-----------------------------------------------------------------------------------------------------------------//	
 	// ***** Save Data ****//
@@ -1644,10 +1659,12 @@ public class ValleyBikeSim {
 
 		// If user does not have a ride in progress, prompt the user to enter stationID
 		while (stationId == -1 && end ==1) {
-			System.out.print("Please enter station ID at current location: ");
-			System.out.println("Type 'back' to return to menu.");
+			System.out.println("First press enter and then either ");
+			System.out.print("(i) Enter station ID at current location; Or ");
+			System.out.println("\n(ii) Type 'back' to return to menu.");
 			String input = userInput.nextLine();
 			if (input.equalsIgnoreCase("back") || input.equalsIgnoreCase("b")) {
+				System.out.println("Click on the applet window to continue");
 				System.out.println();
 				extracted();
 				return;
@@ -1659,7 +1676,7 @@ public class ValleyBikeSim {
 					stationId = Integer.parseInt(input);
 					break;
 				} else { // Else prompt user to enter stationID that exists
-					System.out.println("No such station exists. \nPlease enter valid station ID.");
+					System.out.println("No such station exists. Please enter valid station ID.");
 				}
 			} catch (Exception e) { // Check that input is a number
 				System.out.println("'" + input + "' is not an accepted Station ID. Please try again.");
@@ -1690,7 +1707,7 @@ public class ValleyBikeSim {
 										bikeID = input3;
 										break;
 									} else { // Else prompt user to enter valid bikeID
-										System.out.println("No such bike exists. \nPlease enter valid bike ID.");
+										System.out.println("No such bike exists. Please enter valid bike ID.");
 									}
 								} catch (Exception e) { // Check that input is a number
 									System.out
@@ -1750,9 +1767,16 @@ public class ValleyBikeSim {
 
 		// If user has no-ride in progress then ask user to rent a bike before they can
 		// return
+		if(noUserRide(currentUser.getID())) {
+			System.out.print("You never started a ride. Please start a ride to return a bike. ");
+			end=2;
+			System.out.println();
+			extracted();
+			return;
+		}
 		for (RideHistory r : ride_history) {
 			if (r.getUserID() == user) {
-				if (!r.getEndTime().equals("0") && r.getCompletedRide() == 0) {
+				if (!r.getEndTime().equals("0") && r.getCompletedRide() == 1) {
 					rideNotInProgress = 1;
 					// If ride is not in progress do not allow user to rent bike:
 					System.out.println("You did not check out any bike. Please rent a bike before trying to return it.");
@@ -1766,13 +1790,12 @@ public class ValleyBikeSim {
 		}
 
 		// Get station id of the station the user want to return bike to
-		while (stationId == -1) {
+		while (stationId == -1 && end==1) {
 			System.out.print("Please enter station ID at current location: ");
-			System.out.println("Type 'back' to return to menu.");
+			System.out.println("\nOr Type 'back' to return to menu.");
 			String input1 = userInput1.nextLine();
-
 			if (input1.equalsIgnoreCase("back") || input1.equalsIgnoreCase("b")) {
-
+				System.out.println("Click on the applet window to continue");
 				System.out.println();
 				extracted();
 				return;
